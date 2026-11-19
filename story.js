@@ -50,25 +50,27 @@ function draw() {
     route.style.setProperty('--route-start', offset + 'px');
     const center = box.width / 2;
     const blocks = chapters.map(chapter => {
-      const bounds = ['.chaptertext', '.evidence'].map(selector => chapter.querySelector(selector).getBoundingClientRect());
+      const copy = chapter.querySelector('.chaptertext').getBoundingClientRect();
+      const card = chapter.querySelector('.evidence').getBoundingClientRect();
       return {
-        top: Math.min(...bounds.map(area => area.top)) - box.top - offset - 20,
-        bottom: Math.max(...bounds.map(area => area.bottom)) - box.top - offset + 20
+        x: card.left + card.width / 2 - box.left,
+        top: Math.min(copy.top, card.top) - box.top - offset - 20,
+        bottom: Math.max(copy.bottom, card.bottom) - box.top - offset + 20
       };
     });
     const firstX = cta ? cta.left + cta.width / 2 - box.left : center;
-    const firstY = Math.max(0, blocks[0].top);
-    let d = `M ${firstX} 0 C ${firstX} ${firstY*.48} ${center} ${firstY*.52} ${center} ${firstY}`;
+    let d = `M ${firstX} 0`;
+    // Cross between notes only in the whitespace, and travel behind each note in one continuous stroke.
+    function sweep(x, y, nextX, nextY) {
+      const span = Math.max(0, nextY - y);
+      d += ` C ${x} ${y+span*.56} ${nextX} ${nextY-span*.56} ${nextX} ${nextY}`;
+    }
+    sweep(firstX, 0, blocks[0].x, Math.max(0, blocks[0].top));
     for (const [i, block] of blocks.entries()) {
       const bottom = Math.min(routeHeight, block.bottom);
-      d += ` L ${center} ${bottom}`;
-      const next = blocks[i + 1]?.top ?? routeHeight;
-      const h = Math.max(0, next - bottom);
-      if (h <= 0) continue;
-      const bend = Math.min(box.width * .24, h * .82, 360) * (i % 2 ? -1 : 1) * (i === blocks.length - 1 ? .45 : 1);
-      const turn = center + bend;
-      d += ` C ${center} ${bottom+h*.26} ${turn} ${bottom+h*.22} ${turn} ${bottom+h*.5}`;
-      d += ` S ${center} ${next-h*.26} ${center} ${next}`;
+      d += ` L ${block.x} ${bottom}`;
+      const next = blocks[i + 1];
+      sweep(block.x, bottom, next?.x ?? center, Math.max(bottom, next?.top ?? routeHeight));
     }
     guide.setAttribute('d', d);
     read.setAttribute('d', d);
