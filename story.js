@@ -8,15 +8,13 @@ function show(chapter, step) {
   chapter.dataset.step = step;
   chapter.querySelectorAll('.shot').forEach((shot,i) => { shot.hidden = i !== step; });
   chapter.querySelectorAll('.stages i').forEach((dot,i) => dot.classList.toggle('done',i <= step));
-  chapter.querySelector('.play').textContent = step === 2 ? 'Replay scene' : 'Next step';
+
 }
 function play(chapter) {
   clearInterval(timer);
   if (!chapter || reduced.matches || document.hidden) return;
   timer = setInterval(() => {
-    const step = Number(chapter.dataset.step);
-    if (step < 2) show(chapter, step + 1);
-    if (step >= 1) clearInterval(timer);
+    show(chapter, (Number(chapter.dataset.step) + 1) % chapter.querySelectorAll('.shot').length);
   }, 2700);
 }
 function focusChapter(chapter) {
@@ -58,7 +56,7 @@ for (const chapter of chapters) {
     clearInterval(timer);
     const next = (Number(chapter.dataset.step)+1)%3;
     show(chapter,next);
-    if (next === 0) play(chapter);
+    play(chapter);
   };
 }
 container.classList.add('enhanced');
@@ -96,32 +94,29 @@ if (reel) {
     clearTimeout(timeout);
     frames.forEach((frame,i) => { frame.hidden = i !== index; });
     buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));
-    const label = playing ? 'Pause' : index === frames.length - 1 ? 'Replay' : 'Play';
+    const label = playing ? 'Pause' : 'Play';
     toggle.textContent = label;
     toggle.setAttribute('aria-label', label + ' animation');
     reel.classList.toggle('stopped', !playing || !visible || document.hidden);
     if (playing && visible && !document.hidden) {
       timeout = setTimeout(() => {
-        if (index < frames.length - 1) index++;
-        else playing = false;
+        index = (index + 1) % frames.length;
         renderReel();
-      }, 3600);
+      }, 4500);
     }
   }
   buttons.forEach((button,i) => button.onclick = () => {
     index = i;
-    playing = false;
-    reel.classList.add('manual');
+    reel.classList.toggle('manual', !playing);
     renderReel();
   });
   toggle.onclick = () => {
-    if (!playing && index === frames.length - 1) index = 0;
     playing = !playing;
     if (playing) reel.classList.remove('manual');
     renderReel();
   };
   reduced.addEventListener('change', () => {
-    playing = !reduced.matches && index < frames.length - 1;
+    playing = !reduced.matches;
     renderReel();
   });
   document.addEventListener('visibilitychange',renderReel);

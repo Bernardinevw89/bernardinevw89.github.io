@@ -130,3 +130,37 @@ body > header { min-height: 76px; }
 }
 @media(max-width:720px){.reel{width:min(100%,420px,53svh)}}
 @media(max-height:650px) and (max-width:720px){.reel{width:min(100%,36svh)}.reel-controls button{font-size:.57rem;padding:4px}.reel-controls{gap:0;margin-top:5px}}
+
+/* The pointer lands on the action that hands the section to the next tool. */
+.reel-window {aspect-ratio:1.47;border-color:#cfc6d6;box-shadow:0 28px 60px -24px #45315255,0 4px 14px #48325112}
+.reel .chrome {background:linear-gradient(110deg,#f7f5f8,#e8e1ee)}
+.gesture {position:absolute;right:4%;bottom:5%;font:550 2.25cqw/1.35 var(--mono);color:#f9f7fc}
+.gesture span {display:block;border-radius:4px;background:#665576;padding:.45em .85em;box-shadow:0 2px 5px #30233626}
+.pointer-tip,.click-ring {position:absolute;left:65%;top:59%;pointer-events:none}
+.pointer-tip {z-index:2;width:3.8cqw;height:4.6cqw;filter:drop-shadow(0 1px 1px #31243c66)}
+.pointer-tip:before,.pointer-tip:after {content:"";position:absolute;inset:0;clip-path:polygon(0 0,98% 55%,56% 61%,38% 100%);background:#fff}
+.pointer-tip:after {inset:10% 12% 12% 9%;background:#382d45}
+.click-ring {width:4cqw;height:4cqw;border-radius:50%;border:1.5px solid #baa6d1;opacity:0}
+.reel-frame:nth-child(2) .gesture {bottom:4%}
+.reel-frame:nth-child(3) .gesture span {background:#dfd3ec;color:#312639}
+.reel .finished {padding-bottom:10%}
+.reel .print {background:repeating-linear-gradient(0deg,transparent 0 4px,#ffffff25 4px 5px),#dfd5e9}
+@media(prefers-reduced-motion:no-preference){
+ .reel-frame:not([hidden]) .pointer-tip {animation:work-pointer 4.5s both}
+ .reel-frame:not([hidden]) .click-ring {animation:work-click 4.5s both}
+ .reel-frame:not([hidden]) .gesture span {animation:work-press 4.5s both}
+ .reel-frame:not([hidden]) .finished .spread {transform-origin:top center;animation:viewport-check 4.5s both}
+ @keyframes work-pointer {0%,14%{opacity:0;transform:translate(-48cqw,-15cqw)}24%{opacity:1}50%{transform:translate(-30cqw,-18cqw)}76%{transform:translate(0,0)}83%{transform:scale(.8)}90%,100%{transform:none}}
+ @keyframes work-click {0%,80%{opacity:0;transform:translate(-50%,-50%) scale(.2)}83%{opacity:1}96%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.9)}}
+ @keyframes work-press {0%,80%,96%,100%{transform:none}85%{transform:scale(.94);filter:brightness(1.2)}}
+ @keyframes viewport-check {0%,82%{width:100%;margin-inline:0}97%,100%{width:58%;margin-inline:21%}}
+ .reel.stopped .reel-frame * {animation-play-state:paused!important}
+}
+@media(prefers-reduced-motion:reduce){.gesture .pointer-tip,.click-ring{display:none}}
+.finished {container-type:inline-size}
+@media(prefers-reduced-motion:no-preference){
+ .reel-frame:not([hidden]) .finished .spread {position:relative;animation:viewport-check 4.5s both,mobile-columns 4.5s steps(1,end) both}
+ @keyframes mobile-columns {0%{grid-template-columns:1fr 1fr}92%,100%{grid-template-columns:1fr}}
+ .reel-frame:not([hidden]) .finished .spread strong {animation:mobile-heading 4.5s both}
+ @keyframes mobile-heading {0%,82%{font-size:8.5cqw}97%,100%{font-size:4cqw}}
+}
