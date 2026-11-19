@@ -385,10 +385,15 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chaptertext,.chapter .movie{width:100%;max-width:520px;justify-self:center}
 }
 
-/* A lightweight reading rail under the sticky mobile header, not behind content. */
+/* On phones the route follows the margins and curves behind the field notes. */
 @media(max-width:720px){
- .chapters>.route{display:none}
- body>header.journey-progress-visible::after{content:"";position:absolute;inset-inline:0;inset-block-start:100%;height:2px;pointer-events:none;background:linear-gradient(var(--rose),var(--rose)) 0 center/var(--journey-progress,0%) 100% no-repeat,#e5d9dc}
+ .chapters>.route{inset:var(--route-start,0px) 0 auto;width:100%;height:calc(100% - var(--route-start,0px));overflow:hidden}
+ .route path{stroke-width:1.5;stroke-dasharray:5 7}
+ .chapters .chaptertext{background:none;box-shadow:none}
+}
+@media(max-width:720px) and (prefers-reduced-motion:reduce){
+ .route .route-guide{stroke:#bd7d95}
+ .route .route-read{display:none}
 }
 
 /* Mobile chapters read continuously, independently of which illustration is playing. */

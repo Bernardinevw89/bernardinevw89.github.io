@@ -29,8 +29,9 @@ function focusChapter(chapter) {
   if (active) active.classList.add('current');
 }
 function sync(snap = false) {
-  if (innerWidth > 720) {
-    revealTarget = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .74 - routeStart));
+  if (routeHeight > 0) {
+    const readLine = innerWidth <= 720 ? .64 : .74;
+    revealTarget = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * readLine - routeStart));
     if (snap === true || staticRoute.matches) {
       cancelAnimationFrame(revealFrame);
       revealFrame = 0;
@@ -50,17 +51,6 @@ function sync(snap = false) {
     return box.top <= line && box.bottom >= line;
   });
   focusChapter(target);
-  // Track only the mobile journey, from its top to the last chapter in view.
-  if (innerWidth <= 720 && pageHeader) {
-    const box = container.getBoundingClientRect();
-    const headerHeight = pageHeader.offsetHeight;
-    const readingSpan = Math.max(1, box.height - (innerHeight - headerHeight));
-    const ratio = Math.min(1, Math.max(0, (headerHeight - box.top) / readingSpan));
-    pageHeader.classList.toggle('journey-progress-visible', box.top <= headerHeight + 1 && box.bottom > headerHeight);
-    pageHeader.style.setProperty('--journey-progress', (ratio * 100).toFixed(2) + '%');
-  } else if (pageHeader) {
-    pageHeader.classList.remove('journey-progress-visible');
-  }
 }
 function draw() {
   if (innerWidth > 720) {
@@ -88,6 +78,39 @@ function draw() {
       const handle = (to.y - from.y) * .52;
       d += ` C ${from.x} ${from.y+handle} ${to.x} ${to.y-handle} ${to.x} ${to.y}`;
     }
+    guide.setAttribute('d', d);
+    read.setAttribute('d', d);
+  } else {
+    const box = container.getBoundingClientRect();
+    const cta = document.querySelector('.opening-link')?.getBoundingClientRect();
+    const comparison = document.querySelector('.comparison-hero')?.getBoundingClientRect();
+    const anchor = comparison || cta;
+    const offset = anchor ? Math.min(0, anchor.bottom + 16 - box.top) : 0;
+    routeStart = box.top + scrollY + offset;
+    routeHeight = box.height - offset;
+    route.style.setProperty('--route-start', offset + 'px');
+    const atY = position => position - box.top - offset;
+    const column = chapters[0].querySelector('.chaptertext').getBoundingClientRect();
+    const left = (column.left - box.left) / 2;
+    const right = box.width - (box.right - column.right) / 2;
+    let x = anchor ? anchor.left + anchor.width / 2 - box.left : box.width / 2;
+    let y = 0;
+    let d = `M ${x} 0`;
+    function curve(toX, toY) {
+      const span = Math.max(0, toY-y);
+      d += ` C ${x} ${y+span*.56} ${toX} ${toY-span*.56} ${toX} ${toY}`;
+      x = toX;
+      y = toY;
+    }
+    curve(left, Math.max(0, atY(column.top) - 7));
+    for (const [i, chapter] of chapters.entries()) {
+      const card = chapter.querySelector('.evidence').getBoundingClientRect();
+      const bendStart = Math.max(y, atY(card.top) - 7);
+      d += ` L ${x} ${bendStart}`;
+      y = bendStart;
+      curve(i % 2 === 0 ? right : left, atY(card.top) + Math.min(148, card.height * .45));
+    }
+    d += ` L ${x} ${Math.max(y, routeHeight - 12)}`;
     guide.setAttribute('d', d);
     read.setAttribute('d', d);
   }
