@@ -297,9 +297,51 @@ if (comparison) {
     const button = card.querySelector('.project-preview');
     const fallback = card.querySelector('.project-fallback');
     const name = card.querySelector('h3').textContent;
-    const variants = [...card.querySelectorAll('.project-fallback [data-image]')];
+    const variants = [...card.querySelectorAll('.project-fallback [data-image]')].map(variant => ({
+      name:variant.textContent, src:variant.dataset.image, color:variant.dataset.color,
+      alt:variant.textContent + ' theme demo storefront', app:false
+    }));
     const app = card.dataset.kind === 'app';
     button.hidden = false;
+    let activeIndex = 0;
+    let art = card.querySelector('.project-image img');
+    const cardChoices = [];
+    if (!app) {
+      const section = card.querySelector('.project-card-presets');
+      const label = section.querySelector('.project-card-selection');
+      const group = section.querySelector('.project-card-swatches');
+      group.setAttribute('aria-label', name + ' presets');
+      function selectCard(index) {
+        const data = variants[index];
+        if (index !== activeIndex) {
+          const nextArt = art.cloneNode();
+          nextArt.alt = data.alt;
+          nextArt.src = data.src;
+          nextArt.decoding = 'async';
+          art.replaceWith(nextArt);
+          art = nextArt;
+        }
+        activeIndex = index;
+        label.textContent = 'Preset: ' + data.name;
+        cardChoices.forEach((choice, i) => choice.setAttribute('aria-pressed', String(i === index)));
+      }
+      variants.forEach((data, index) => {
+        const choice = document.createElement('button');
+        const square = document.createElement('i');
+        choice.type = 'button';
+        choice.title = data.name;
+        choice.setAttribute('aria-label', data.name + ' preset');
+        square.style.setProperty('--preset-color', data.color);
+        square.setAttribute('aria-hidden','true');
+        choice.append(square);
+        choice.addEventListener('click', () => selectCard(index));
+        cardChoices.push(choice);
+        group.append(choice);
+      });
+      selectCard(0);
+      section.hidden = false;
+      card.selectPreset = selectCard;
+    }
     if (fallback) fallback.hidden = true;
     button.addEventListener('click', () => {
       opener = button;
@@ -318,10 +360,9 @@ if (comparison) {
         showPreset({name, url:original.href, src:art.src, alt:art.alt, app}, false);
       } else {
         const choices = [];
-        let activeIndex = 0;
         function select(index, announce) {
           if (announce && index === activeIndex) return;
-          activeIndex = index;
+          card.selectPreset(index);
           choices.forEach(({choice, thumb}, i) => {
             const pressed = String(i === index);
             choice.setAttribute('aria-pressed', pressed);
@@ -329,20 +370,19 @@ if (comparison) {
           });
           showPreset(choices[index].data, announce);
         }
-        variants.forEach(variant => {
+        variants.forEach(data => {
           const choice = document.createElement('button');
           const dot = document.createElement('i');
           const thumb = document.createElement('button');
           const preview = document.createElement('img');
-          const name = variant.textContent;
-          const data = {name,src:variant.dataset.image,alt:name + ' theme demo storefront',app:false};
+          const {name} = data;
           choice.type = thumb.type = 'button';
           thumb.setAttribute('aria-label', name + ' thumbnail');
           preview.src = data.src;
           preview.alt = '';
           preview.decoding = 'async';
           thumb.append(preview);
-          dot.style.setProperty('--preset-color', variant.dataset.color);
+          dot.style.setProperty('--preset-color', data.color);
           dot.setAttribute('aria-hidden','true');
           choice.append(dot, name);
           const index = choices.push({choice, thumb, data}) - 1;
@@ -351,7 +391,7 @@ if (comparison) {
           swatches.append(choice);
           thumbnails.append(thumb);
         });
-        select(0, false);
+        select(activeIndex, false);
       }
       dialog.showModal();
       dialog.scrollTop = 0;
