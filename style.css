@@ -490,9 +490,9 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .project-controls button:enabled:hover,.project-dialog-close:hover{border-color:var(--rose);color:var(--rose)}
 .project-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 4 * var(--project-gap) - 42px)/4);gap:var(--project-gap);--project-gap:clamp(15px,2vw,28px);padding:4px 3px 12px;margin:0 -3px;overflow-x:auto;list-style:none;scroll-snap-type:x mandatory;scroll-padding-inline:3px;scrollbar-width:none;-ms-overflow-style:none}
 .project-track::-webkit-scrollbar{display:none}
-.project-card{min-width:0;scroll-snap-align:start}
+.project-card{min-width:0;scroll-snap-align:start;border-radius:6px}
 .project-tile{position:relative}
-.project-image{display:block;overflow:hidden;border-radius:2px;background:#eeedef}
+.project-image{display:block;overflow:hidden;border-radius:6px;background:#eeedef}
 .project-image img{display:block;width:100%;height:auto;aspect-ratio:1.38;object-fit:cover;object-position:center 12%}
 .project-card-copy{padding:12px 0 4px}
 .project-card-copy>small,.project-dialog-type{color:var(--rose)}
@@ -500,7 +500,7 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .project-actions{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
 .project-actions:has(button[hidden]):not(:has(a)){display:none}
 .project-actions>a,.project-fallback{font-size:.88rem}
-.project-preview{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:44px;height:44px;border:1px solid #dedbdf;border-radius:2px;background:var(--paper);color:var(--ink);box-shadow:0 2px 8px #2e222625;cursor:pointer}
+.project-preview{position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:44px;height:44px;border:1px solid #dedbdf;border-radius:50%;background:var(--paper);color:var(--ink);box-shadow:0 2px 8px #2e222625;cursor:pointer}
 .project-preview:hover{color:var(--rose);border-color:var(--rose)}
 .project-card-selection{margin-top:5px;font-size:.82rem;color:#54494f}
 .project-card-swatches{display:grid;grid-template-columns:repeat(5,minmax(0,41px));max-width:100%;margin-inline-start:-4px}
