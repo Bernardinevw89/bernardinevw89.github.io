@@ -349,3 +349,28 @@ body > header { min-height: 76px; }
 @media(max-width:720px){.hero-swap .opening-copy .type-heading{font-size:clamp(1.75rem,11vw,5.5rem)}}
 
 .hero-swap .byline::before,.hero-swap .byline::after{content:none}
+
+/* Mobile navigation: ordinary links remain available if dialog enhancement is absent. */
+.mobile-menu-toggle,.mobile-menu:not([open]){display:none}
+.mobile-menu{position:fixed;inset:0 0 0 auto;margin:0;padding:0;border:0;width:min(87vw,390px);height:100dvh;max-width:none;max-height:none;background:var(--paper);color:var(--ink);box-shadow:-10px 0 40px #2e222630;overscroll-behavior:contain}
+.mobile-menu[open]{animation:menu-slide-in .26s ease both}
+.mobile-menu::backdrop{background:#2e222665;animation:menu-fade-in .26s ease both}
+.mobile-menu-panel{min-height:100%;padding:16px clamp(18px,6vw,32px) 28px}
+.mobile-menu-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.mobile-menu-head h2{font-size:1.8rem}
+.mobile-menu-close,.mobile-menu-toggle{width:44px;height:44px;place-items:center;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);cursor:pointer}
+.mobile-menu-close{display:grid}
+.mobile-menu-close:focus-visible,.mobile-menu-toggle:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
+.mobile-menu nav{display:grid;margin-top:14px}
+.mobile-menu nav a{padding:15px 0;border-bottom:1px solid var(--line);font-size:1.06rem;text-decoration:none}
+.mobile-menu nav .contact{margin-top:22px;padding:12px 17px;justify-self:start;border-bottom:0}
+body:has(.mobile-menu[open]){overflow:hidden}
+@keyframes menu-slide-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes menu-fade-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.mobile-menu[open],.mobile-menu::backdrop{animation:none}}
+@media(max-width:720px){
+ body>header{flex-wrap:wrap}
+ body>header>nav{flex-wrap:wrap;justify-content:flex-start}
+ .menu-enhanced body>header>nav{display:none}
+ .menu-enhanced .mobile-menu-toggle{display:grid;flex:none}
+}

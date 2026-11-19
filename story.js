@@ -151,3 +151,42 @@ if (comparison) {
   });
   schedule(1800);
 })();
+
+// Native dialog provides a modal focus trap and makes the rest of the page inert.
+(() => {
+  const menu = document.querySelector('.mobile-menu');
+  const toggle = document.querySelector('.mobile-menu-toggle');
+  if (!menu || !toggle || typeof menu.showModal !== 'function') return;
+  const close = menu.querySelector('.mobile-menu-close');
+  const mobile = window.matchMedia('(max-width: 720px)');
+  document.documentElement.classList.add('menu-enhanced');
+  let destination = null;
+  toggle.addEventListener('click', () => {
+    if (!mobile.matches || menu.open) return;
+    destination = null;
+    menu.showModal();
+    toggle.setAttribute('aria-expanded','true');
+  });
+  close.addEventListener('click', () => menu.close());
+  menu.addEventListener('click', (event) => { if (event.target === menu) menu.close(); });
+  menu.addEventListener('close', () => {
+    toggle.setAttribute('aria-expanded','false');
+    if (destination) destination.focus({preventScroll:true});
+    else if (mobile.matches) toggle.focus({preventScroll:true});
+    destination = null;
+  });
+  menu.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => {
+    const href = a.getAttribute('href');
+    if (href.startsWith('#')) {
+      destination = document.getElementById(href.slice(1));
+      if (destination && !destination.hasAttribute('tabindex')) destination.setAttribute('tabindex','-1');
+    }
+    menu.close();
+  }));
+  if (mobile.addEventListener) mobile.addEventListener('change', () => {
+    if (!mobile.matches && menu.open) {
+      destination = document.querySelector('body > header > nav a');
+      menu.close();
+    }
+  });
+})();
