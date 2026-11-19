@@ -272,7 +272,7 @@ if (comparison) {
   let pointerDownOnBackdrop = false;
 
   function showPreset(data, announce) {
-    const {name, url, src, alt, app} = data;
+    const {name, src, alt, app} = data;
     title.textContent = name;
     // A cold image request must not display the previous preset underneath the new name.
     const nextImage = document.createElement('img');
@@ -282,8 +282,14 @@ if (comparison) {
     image.replaceWith(nextImage);
     image = nextImage;
     caption.textContent = app ? 'Artwork from the Shopify App Store.' : name + ' preset demo storefront.';
-    link.href = url;
-    link.textContent = app ? 'View on App Store' : 'View on Theme Store';
+    link.hidden = !app;
+    if (app) {
+      link.href = data.url;
+      link.textContent = 'View on App Store';
+    } else {
+      link.removeAttribute('href');
+      link.textContent = '';
+    }
     if (announce) liveText.textContent = name + ' preset selected.';
   }
 
@@ -291,7 +297,7 @@ if (comparison) {
     const button = card.querySelector('.project-preview');
     const fallback = card.querySelector('.project-fallback');
     const name = card.querySelector('h3').textContent;
-    const variants = [...card.querySelectorAll('.project-fallback a')];
+    const variants = [...card.querySelectorAll('.project-fallback [data-image]')];
     const app = card.dataset.kind === 'app';
     button.hidden = false;
     if (fallback) fallback.hidden = true;
@@ -329,7 +335,7 @@ if (comparison) {
           const thumb = document.createElement('button');
           const preview = document.createElement('img');
           const name = variant.textContent;
-          const data = {name,url:variant.href,src:variant.dataset.image,alt:name + ' theme demo storefront',app:false};
+          const data = {name,src:variant.dataset.image,alt:name + ' theme demo storefront',app:false};
           choice.type = thumb.type = 'button';
           thumb.setAttribute('aria-label', name + ' thumbnail');
           preview.src = data.src;
