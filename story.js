@@ -39,12 +39,12 @@ function sync() {
 function draw() {
   const w = container.clientWidth;
   const mobile = innerWidth <= 720;
-  let d = 'M ' + w * (mobile ? .05 : .5) + ' 0';
+  let d = 'M ' + w * .5 + ' 0';
   for (const [i,chapter] of chapters.entries()) {
     const y = chapter.offsetTop;
     const h = chapter.offsetHeight;
-    const x = w * (mobile ? .055 : .5);
-    const bend = w * (mobile ? .04 : .29) * (i % 2 ? -1 : 1);
+    const x = w * .5;
+    const bend = w * (mobile ? .12 : .29) * (i % 2 ? -1 : 1);
     d += ' C '+(x+bend)+' '+(y+h*.32)+' '+(x-bend)+' '+(y+h*.7)+' '+x+' '+(y+h);
   }
   path.setAttribute('d',d);
@@ -62,7 +62,7 @@ for (const chapter of chapters) {
 container.classList.add('enhanced');
 container.addEventListener('focusin',event => {
   const chapter = event.target.closest('.chapter');
-  if (chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
+  if (chapter && event.target !== chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
 });
 addEventListener('scroll',sync,{passive:true});
 addEventListener('resize',draw);
@@ -75,7 +75,7 @@ const pageHeader = document.querySelector('body > header');
 const opening = document.querySelector('.opening');
 if (opening) {
   function fitOpening() {
-    opening.style.setProperty('--nav-height', pageHeader.offsetHeight + 'px');
+    document.documentElement.style.setProperty('--nav-height', pageHeader.offsetHeight + 'px');
   }
   fitOpening();
   new ResizeObserver(fitOpening).observe(pageHeader);

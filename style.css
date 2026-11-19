@@ -374,3 +374,12 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .menu-enhanced body>header>nav{display:none}
  .menu-enhanced .mobile-menu-toggle{display:grid;flex:none}
 }
+
+@media(max-width:720px){
+ html{scroll-padding-top:calc(var(--nav-height,72px) + 14px)}
+ body>header{position:sticky;inset-block-start:0;z-index:5;background:var(--paper)}
+ .journeyintro.opening.hero-swap{min-height:calc(100svh - var(--nav-height,72px));min-height:calc(100dvh - var(--nav-height,72px));padding-block:clamp(26px,7vh,64px);overflow:visible}
+ .hero-swap .opening-copy .type-heading{font-size:clamp(2.1rem,13.3vw,6rem)}
+ .chapter{padding-inline:6vw}
+ .chaptertext,.chapter .movie{width:100%;max-width:520px;justify-self:center}
+}
