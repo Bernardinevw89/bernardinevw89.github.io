@@ -72,3 +72,13 @@ new ResizeObserver(draw).observe(container);
 document.addEventListener('visibilitychange',() => play(active));
 reduced.addEventListener('change',() => play(active));
 draw();
+
+const pageHeader = document.querySelector('body > header');
+const opening = document.querySelector('.opening');
+if (opening) {
+  function fitOpening() {
+    opening.style.setProperty('--nav-height', pageHeader.offsetHeight + 'px');
+  }
+  fitOpening();
+  new ResizeObserver(fitOpening).observe(pageHeader);
+}
