@@ -282,14 +282,8 @@ if (comparison) {
     image.replaceWith(nextImage);
     image = nextImage;
     caption.textContent = app ? 'Artwork from the Shopify App Store.' : name + ' preset demo storefront.';
-    link.hidden = !app;
-    if (app) {
-      link.href = data.url;
-      link.textContent = 'View on App Store';
-    } else {
-      link.removeAttribute('href');
-      link.textContent = '';
-    }
+    link.href = data.url;
+    link.textContent = 'View on Shopify';
     if (announce) liveText.textContent = name + ' preset selected.';
   }
 
@@ -298,7 +292,7 @@ if (comparison) {
     const fallback = card.querySelector('.project-fallback');
     const name = card.querySelector('h3').textContent;
     const variants = [...card.querySelectorAll('.project-fallback [data-image]')].map(variant => ({
-      name:variant.textContent, src:variant.dataset.image, color:variant.dataset.color,
+      name:variant.textContent, src:variant.dataset.image, color:variant.dataset.color, url:variant.dataset.shopifyUrl,
       alt:variant.textContent + ' theme demo storefront', app:false
     }));
     const app = card.dataset.kind === 'app';
