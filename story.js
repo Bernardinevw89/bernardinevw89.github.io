@@ -227,3 +227,133 @@ if (comparison) {
     }
   });
 })();
+
+(() => {
+  const work = document.querySelector('#work');
+  const track = work?.querySelector('.project-track');
+  if (!track) return;
+  const cards = [...track.querySelectorAll('.project-card')];
+  const controls = work.querySelector('.project-controls');
+  const [previous, next] = controls.querySelectorAll('button');
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+  function updateButtons() {
+    previous.disabled = track.scrollLeft <= 2;
+    next.disabled = track.scrollLeft >= maxScroll() - 2;
+  }
+  function step(direction) {
+    const first = cards[0].getBoundingClientRect().left;
+    const stops = [...new Set(cards.map(c => Math.min(maxScroll(), Math.round(c.getBoundingClientRect().left - first))))];
+    const position = track.scrollLeft;
+    const nextStop = direction > 0 ? stops.find(stop => stop > position + 3) : stops.reverse().find(stop => stop < position - 3);
+    if (nextStop !== undefined) track.scrollTo({left:nextStop, behavior:motion.matches ? 'instant' : 'smooth'});
+  }
+  controls.hidden = false;
+  previous.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+  track.addEventListener('scroll',updateButtons,{passive:true});
+  new ResizeObserver(updateButtons).observe(track);
+  updateButtons();
+
+  const dialog = work.querySelector('.project-dialog');
+  if (typeof dialog.showModal !== 'function') return;
+  const close = dialog.querySelector('.project-dialog-close');
+  const title = dialog.querySelector('h3');
+  const type = dialog.querySelector('.project-dialog-type');
+  const image = dialog.querySelector('.project-dialog-media>img');
+  const thumbnails = dialog.querySelector('.project-thumbnails');
+  const caption = dialog.querySelector('figcaption');
+  const description = dialog.querySelector('.project-dialog-description');
+  const presets = dialog.querySelector('.project-presets');
+  const swatches = dialog.querySelector('.project-swatches');
+  const liveText = dialog.querySelector('.project-update');
+  const link = dialog.querySelector('.project-dialog-link');
+  let opener;
+  let pointerDownOnBackdrop = false;
+
+  function showPreset(data, announce) {
+    const {name, url, src, alt, app} = data;
+    title.textContent = name;
+    image.alt = alt;
+    image.src = src;
+    caption.textContent = app ? 'Artwork from the Shopify App Store.' : name + ' preset demo storefront.';
+    link.href = url;
+    link.textContent = app ? 'View on App Store' : 'View on Theme Store';
+    if (announce) liveText.textContent = name + ' preset selected.';
+  }
+
+  for (const card of cards) {
+    const button = card.querySelector('.project-preview');
+    const fallback = card.querySelector('.project-fallback');
+    const name = card.querySelector('h3').textContent;
+    const variants = [...card.querySelectorAll('.project-fallback a')];
+    const app = card.dataset.kind === 'app';
+    button.hidden = false;
+    if (fallback) fallback.hidden = true;
+    button.addEventListener('click', () => {
+      opener = button;
+      pointerDownOnBackdrop = false;
+      type.textContent = app ? 'Shopify app' : name + ' theme family';
+      description.textContent = app
+        ? 'I contributed to the bundle appearance editor with the Kitenzo team, alongside other features and fixes.'
+        : 'I contributed to this theme family at Eight. Explore its current presets, which include later releases.';
+      liveText.textContent = '';
+      swatches.replaceChildren();
+      thumbnails.replaceChildren();
+      presets.hidden = thumbnails.hidden = app;
+      if (app) {
+        const original = card.querySelector('.project-image');
+        const art = original.querySelector('img');
+        showPreset({name, url:original.href, src:art.src, alt:art.alt, app}, false);
+      } else {
+        const choices = [];
+        let activeIndex = 0;
+        function select(index, announce) {
+          if (announce && index === activeIndex) return;
+          activeIndex = index;
+          choices.forEach(({choice, thumb}, i) => {
+            const pressed = String(i === index);
+            choice.setAttribute('aria-pressed', pressed);
+            thumb.setAttribute('aria-pressed', pressed);
+          });
+          showPreset(choices[index].data, announce);
+        }
+        variants.forEach(variant => {
+          const choice = document.createElement('button');
+          const dot = document.createElement('i');
+          const thumb = document.createElement('button');
+          const preview = document.createElement('img');
+          const name = variant.textContent;
+          const data = {name,url:variant.href,src:variant.dataset.image,alt:name + ' theme demo storefront',app:false};
+          choice.type = thumb.type = 'button';
+          thumb.setAttribute('aria-label', name + ' thumbnail');
+          preview.src = data.src;
+          preview.alt = '';
+          preview.decoding = 'async';
+          thumb.append(preview);
+          dot.style.setProperty('--preset-color', variant.dataset.color);
+          dot.setAttribute('aria-hidden','true');
+          choice.append(dot, name);
+          const index = choices.push({choice, thumb, data}) - 1;
+          choice.addEventListener('click', () => select(index, true));
+          thumb.addEventListener('click', () => select(index, true));
+          swatches.append(choice);
+          thumbnails.append(thumb);
+        });
+        select(0, false);
+      }
+      dialog.showModal();
+      dialog.scrollTop = 0;
+    });
+  }
+  close.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('pointerdown', e => { pointerDownOnBackdrop = e.target === dialog; });
+  dialog.addEventListener('click', e => {
+    if (e.target === dialog && pointerDownOnBackdrop) dialog.close();
+    pointerDownOnBackdrop = false;
+  });
+  dialog.addEventListener('close', () => {
+    opener?.focus({preventScroll:true});
+    opener = undefined;
+  });
+})();
