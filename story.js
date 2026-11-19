@@ -109,3 +109,37 @@ if (comparison) {
   display(50);
   observer.observe(comparison);
 }
+
+// Animate only the visual copy. The full accessible heading is static.
+(() => {
+  const output = document.querySelector('[data-type-output]');
+  if (!output || !window.matchMedia) return;
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (motion.matches) return;
+
+  const phrases = ['Shopify themes', 'Shopify apps', 'web interfaces'];
+  const pause = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+  let stopped = false;
+
+  if (motion.addEventListener) motion.addEventListener('change', ({ matches }) => {
+    if (!matches) return;
+    stopped = true;
+    output.textContent = phrases[phrases.length - 1];
+  });
+
+  (async () => {
+    for (let i = 1; i < phrases.length; i++) {
+      await pause(950);
+      for (let n = phrases[i - 1].length - 1; n >= 0; n--) {
+        if (stopped) return;
+        output.textContent = phrases[i - 1].slice(0, n);
+        await pause(30);
+      }
+      for (let n = 1; n <= phrases[i].length; n++) {
+        if (stopped) return;
+        output.textContent = phrases[i].slice(0, n);
+        await pause(51);
+      }
+    }
+  })();
+})();
