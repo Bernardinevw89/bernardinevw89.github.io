@@ -23,7 +23,7 @@ function focusChapter(chapter) {
   active = chapter;
   if (active) {
     active.classList.add('current');
-    show(active,0);
+    if (innerWidth > 720) show(active,0);
   }
   play(active);
 }
@@ -63,13 +63,13 @@ for (const chapter of chapters) {
     clearInterval(timer);
     const next = (Number(chapter.dataset.step)+1)%3;
     show(chapter,next);
-    play(chapter);
+    play(innerWidth <= 720 ? active : chapter);
   };
 }
 container.classList.add('enhanced');
 container.addEventListener('focusin',event => {
   const chapter = event.target.closest('.chapter');
-  if (chapter && event.target !== chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
+  if (innerWidth > 720 && chapter && event.target !== chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
 });
 addEventListener('scroll',sync,{passive:true});
 addEventListener('resize',draw);

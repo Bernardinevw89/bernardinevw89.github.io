@@ -393,3 +393,9 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chapters.enhanced .chaptertext>small::after{content:"";position:absolute;inset-inline-start:calc(100% + 10px);inset-block-start:50%;transform:translateY(-50%);width:30px;height:2px;border-radius:999px;background:linear-gradient(var(--rose),var(--rose)) 0 center/0 100% no-repeat,#dbcdd1;transition:background-size .45s ease-out}
  .chapters.enhanced .chapter-reached .chaptertext>small::after{background-size:100% 100%}
 }
+
+/* Mobile chapters read continuously, independently of which illustration is playing. */
+@media(max-width:720px){
+ .chapter{min-height:0;padding-block:clamp(24px,7vw,40px);gap:22px}
+ .chapters.enhanced .chapter:not(.current) :is(.chaptertext,.movie){opacity:1;translate:none;transition:none}
+}
