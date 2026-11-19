@@ -87,74 +87,57 @@ if (reel) {
   const buttons = [...reel.querySelectorAll('.reel-steps button')];
   const toggle = reel.querySelector('.reel-toggle');
   const video = reel.querySelector('.sway-video');
-  const boardRecording = reel.querySelector('.board-recording');
-  const figmaRecording = reel.querySelector('.figma-recording');
-  const boardTarget = reel.querySelector('.capture-target');
-  const designLink = reel.querySelector('.ticket-hotspot');
-  const ticketTime = 2;
   let index = 0;
   let playing = !reduced.matches;
   let visible = true;
-  let timeout;
-  function setStage(next) {
-    index = next;
-    const frameIndex = Math.max(0, index - 1);
-    frames.forEach((frame,i) => { frame.hidden = i !== frameIndex; });
-    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));
-    boardTarget.hidden = index !== 0;
-    designLink.hidden = index !== 1;
-  }
-  function renderReel() {
-    clearTimeout(timeout);
+  let timer;
+  let fadeTimer;
+  function schedule() {
+    clearTimeout(timer);
     const running = playing && visible && !document.hidden;
-    const label = playing ? 'Pause' : 'Play';
-    toggle.textContent = label;
-    toggle.setAttribute('aria-label', label + ' animation');
     reel.classList.toggle('stopped', !running);
-    const clip = [boardRecording, boardRecording, figmaRecording, null, video][index];
-    for (const media of [boardRecording,figmaRecording,video]) if (media !== clip || !running) media.pause();
+    toggle.textContent = playing ? 'Pause' : 'Play';
+    toggle.setAttribute('aria-label', toggle.textContent + ' animation');
+    if (!running || index !== 4) video.pause();
     if (!running) return;
-    if (clip) {
-      clip.play().catch(error => {
-        if (error.name !== 'AbortError' && frames[Math.max(0,index-1)].contains(clip) && playing && visible && !document.hidden)
-          timeout = setTimeout(() => go(clip === boardRecording ? 2 : clip === figmaRecording ? 3 : 0),4500);
+    if (index === 4) {
+      video.play().catch(error => {
+        if (error.name !== 'AbortError' && playing && visible && !document.hidden && index === 4)
+          timer = setTimeout(() => go(0), 4000);
       });
-    } else timeout = setTimeout(() => go(index + 1),4500);
+    } else timer = setTimeout(() => go(index + 1), index === 3 ? 4400 : 3000);
   }
   function go(next) {
-    setStage(next);
-    if (next < 2) boardRecording.currentTime = next === 0 ? 0 : ticketTime;
-    if (next === 2) figmaRecording.currentTime = 0;
+    clearTimeout(fadeTimer);
+    const previous = index;
+    index = next;
+    const blend = !reduced.matches && previous !== next;
+    frames.forEach((frame,i) => {
+      const leaving = blend && i === previous;
+      frame.hidden = i !== next && !leaving;
+      frame.inert = i !== next;
+      frame.classList.toggle('leaving', leaving);
+      frame.classList.toggle('arriving', blend && i === next);
+    });
+    if (blend) fadeTimer = setTimeout(() => {
+      frames[previous].hidden = true;
+      frames[previous].classList.remove('leaving');
+    }, 500);
+    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === next)));
     if (next === 4) video.currentTime = 0;
-    renderReel();
+    schedule();
   }
-  boardRecording.addEventListener('timeupdate', () => {
-    if (index === 0 && boardRecording.currentTime >= ticketTime) setStage(1);
-  });
-  boardRecording.addEventListener('ended', () => go(2));
-  figmaRecording.addEventListener('ended', () => go(3));
   video.addEventListener('ended', () => go(0));
-  boardTarget.onclick = () => { go(1); designLink.focus({preventScroll:true}); };
-  designLink.onclick = event => {
-    event.preventDefault();
-    go(2);
-    buttons[2].focus({preventScroll:true});
-  };
-  reel.querySelectorAll('.dock-icon').forEach((target,i) => {
-    target.onclick = () => { go(i + 3); buttons[index].focus({preventScroll:true}); };
-  });
-  buttons.forEach((button,i) => button.onclick = () => {
-    reel.classList.toggle('manual', !playing);
-    go(i);
-  });
-  toggle.onclick = () => {
-    playing = !playing;
-    if (playing) reel.classList.remove('manual');
-    renderReel();
-  };
-  reduced.addEventListener('change', () => { playing = !reduced.matches; renderReel(); });
-  document.addEventListener('visibilitychange',renderReel);
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; renderReel(); }).observe(reel);
-  if (location.hash === '#hero-design') go(2);
-  else renderReel();
+  function follow(next) {
+    go(next);
+    buttons[next].focus({preventScroll:true});
+  }
+  reel.querySelector('.capture-target').onclick = () => follow(1);
+  reel.querySelector('.ticket-hotspot').onclick = event => { event.preventDefault(); follow(2); };
+  buttons.forEach((button,i) => button.onclick = () => go(i));
+  toggle.onclick = () => { playing = !playing; schedule(); };
+  reduced.addEventListener('change', () => { playing = !reduced.matches; schedule(); });
+  document.addEventListener('visibilitychange',schedule);
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }).observe(reel);
+  go(location.hash === '#hero-design' ? 2 : 0);
 }

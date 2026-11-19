@@ -280,3 +280,13 @@ body > header { min-height: 76px; }
 .ticket-hotspot[hidden],.capture-target[hidden]{display:none}
 
 .figma-recording {width:100%;height:100%;object-fit:contain;background:#f2f2f2}
+
+.workflow-still {width:100%;height:100%;object-fit:contain;display:block}
+.figma-capture {background:#1e1e1e}
+.sprint-reel .reel-frame:not([hidden]) {animation:none}
+.sprint-reel .leaving {z-index:1;pointer-events:none}
+@media(prefers-reduced-motion:no-preference){
+  .sprint-reel .reel-frame.arriving:not([hidden]) {z-index:2;animation:still-dissolve .48s ease-in-out both}
+  @keyframes still-dissolve {from{opacity:0}to{opacity:1}}
+}
+.sprint-reel.stopped .reel-frame.arriving {animation-play-state:running!important}
