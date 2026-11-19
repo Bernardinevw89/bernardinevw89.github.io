@@ -260,7 +260,7 @@ if (comparison) {
   const close = dialog.querySelector('.project-dialog-close');
   const title = dialog.querySelector('h3');
   const type = dialog.querySelector('.project-dialog-type');
-  const image = dialog.querySelector('.project-dialog-media>img');
+  let image = dialog.querySelector('.project-dialog-media>img');
   const thumbnails = dialog.querySelector('.project-thumbnails');
   const caption = dialog.querySelector('figcaption');
   const description = dialog.querySelector('.project-dialog-description');
@@ -274,8 +274,13 @@ if (comparison) {
   function showPreset(data, announce) {
     const {name, url, src, alt, app} = data;
     title.textContent = name;
-    image.alt = alt;
-    image.src = src;
+    // A cold image request must not display the previous preset underneath the new name.
+    const nextImage = document.createElement('img');
+    nextImage.alt = alt;
+    nextImage.decoding = 'async';
+    nextImage.src = src;
+    image.replaceWith(nextImage);
+    image = nextImage;
     caption.textContent = app ? 'Artwork from the Shopify App Store.' : name + ' preset demo storefront.';
     link.href = url;
     link.textContent = app ? 'View on App Store' : 'View on Theme Store';
