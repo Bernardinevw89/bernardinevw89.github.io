@@ -1,7 +1,12 @@
 const pageHeader = document.querySelector('body > header');
 const chapters = [...document.querySelectorAll('.chapter')];
 const container = document.querySelector('.chapters');
-const path = document.querySelector('.route path');
+const route = document.querySelector('.route');
+const guide = route.querySelector('.route-guide');
+const read = route.querySelector('.route-read');
+const reveal = route.querySelector('clipPath rect');
+let routeStart = 0;
+let routeHeight = 0;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active;
 function focusChapter(chapter) {
@@ -11,7 +16,12 @@ function focusChapter(chapter) {
   if (active) active.classList.add('current');
 }
 function sync() {
-  path.style.strokeDashoffset = reduced.matches ? '' : String(-scrollY * 0.1);
+  if (innerWidth > 720) {
+    const travelled = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .56 - routeStart));
+    reveal.setAttribute('height', travelled);
+    const drift = reduced.matches ? '' : String(-travelled * .035);
+    guide.style.strokeDashoffset = read.style.strokeDashoffset = drift;
+  }
   const line = innerHeight / 2;
   const target = chapters.find(chapter => {
     const box = chapter.getBoundingClientRect();
@@ -31,25 +41,38 @@ function sync() {
   }
 }
 function draw() {
-  const lane = path.ownerSVGElement;
-  const x = lane.clientWidth / 2;
-  const stops = lane.querySelector('.route-stops');
-  const markers = [];
-  let d = 'M ' + x + ' 0';
-  for (const [i, chapter] of chapters.entries()) {
-    const y = chapter.offsetTop;
-    const h = chapter.offsetHeight;
-    const bend = x * .73 * (i % 2 ? -1 : 1);
-    d += ` C ${x} ${y+h*.16} ${x+bend} ${y+h*.30} ${x+bend} ${y+h*.5}`;
-    d += ` S ${x} ${y+h*.84} ${x} ${y+h}`;
-    const dot = document.createElementNS(lane.namespaceURI, 'circle');
-    dot.setAttribute('cx', x + bend);
-    dot.setAttribute('cy', y + h * .5);
-    dot.setAttribute('r', '4');
-    markers.push(dot);
+  if (innerWidth > 720) {
+    const box = container.getBoundingClientRect();
+    const cta = document.querySelector('.opening-link')?.getBoundingClientRect();
+    const offset = cta ? Math.min(0, cta.bottom + 26 - box.top) : 0;
+    routeStart = box.top + scrollY + offset;
+    routeHeight = box.height - offset;
+    route.style.setProperty('--route-start', offset + 'px');
+    const center = box.width / 2;
+    const blocks = chapters.map(chapter => {
+      const bounds = ['.chaptertext', '.evidence'].map(selector => chapter.querySelector(selector).getBoundingClientRect());
+      return {
+        top: Math.min(...bounds.map(area => area.top)) - box.top - offset - 20,
+        bottom: Math.max(...bounds.map(area => area.bottom)) - box.top - offset + 20
+      };
+    });
+    const firstX = cta ? cta.left + cta.width / 2 - box.left : center;
+    const firstY = Math.max(0, blocks[0].top);
+    let d = `M ${firstX} 0 C ${firstX} ${firstY*.48} ${center} ${firstY*.52} ${center} ${firstY}`;
+    for (const [i, block] of blocks.entries()) {
+      const bottom = Math.min(routeHeight, block.bottom);
+      d += ` L ${center} ${bottom}`;
+      const next = blocks[i + 1]?.top ?? routeHeight;
+      const h = Math.max(0, next - bottom);
+      if (h <= 0) continue;
+      const bend = Math.min(box.width * .24, h * .82, 360) * (i % 2 ? -1 : 1) * (i === blocks.length - 1 ? .45 : 1);
+      const turn = center + bend;
+      d += ` C ${center} ${bottom+h*.26} ${turn} ${bottom+h*.22} ${turn} ${bottom+h*.5}`;
+      d += ` S ${center} ${next-h*.26} ${center} ${next}`;
+    }
+    guide.setAttribute('d', d);
+    read.setAttribute('d', d);
   }
-  path.setAttribute('d', d);
-  stops?.replaceChildren(...markers);
   sync();
 }
 container.classList.add('enhanced');
@@ -59,7 +82,10 @@ container.addEventListener('focusin',event => {
 });
 addEventListener('scroll',sync,{passive:true});
 addEventListener('resize',draw);
-new ResizeObserver(draw).observe(container);
+const routeLayout = new ResizeObserver(draw);
+routeLayout.observe(container);
+for (const area of document.querySelectorAll('.journeyintro, .chaptertext, .evidence')) routeLayout.observe(area);
+reduced.addEventListener('change', sync);
 draw();
 
 const opening = document.querySelector('.opening');
