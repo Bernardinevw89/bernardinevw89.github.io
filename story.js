@@ -101,6 +101,7 @@ if (opening) {
 
 const comparison = document.querySelector('.comparison-hero');
 if (comparison) {
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const range = comparison.querySelector('input');
   let animation;
   function display(value) {
