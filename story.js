@@ -88,48 +88,57 @@ if (reel) {
   const toggle = reel.querySelector('.reel-toggle');
   const video = reel.querySelector('.sway-video');
   const boardRecording = reel.querySelector('.board-recording');
+  const boardTarget = reel.querySelector('.capture-target');
+  const designLink = reel.querySelector('.ticket-hotspot');
+  const ticketTime = 2;
   let index = 0;
   let playing = !reduced.matches;
   let visible = true;
   let timeout;
+  function setStage(next) {
+    index = next;
+    const frameIndex = Math.max(0, index - 1);
+    frames.forEach((frame,i) => { frame.hidden = i !== frameIndex; });
+    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));
+    boardTarget.hidden = index !== 0;
+    designLink.hidden = index !== 1;
+  }
   function renderReel() {
     clearTimeout(timeout);
-    frames.forEach((frame,i) => { frame.hidden = i !== index; });
-    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));
+    const running = playing && visible && !document.hidden;
     const label = playing ? 'Pause' : 'Play';
     toggle.textContent = label;
     toggle.setAttribute('aria-label', label + ' animation');
-    reel.classList.toggle('stopped', !playing || !visible || document.hidden);
-    const running = playing && visible && !document.hidden;
-    const clip = index === 0 ? boardRecording : index === frames.length - 1 ? video : null;
-    if (clip !== boardRecording) boardRecording.pause();
-    if (clip !== video) video.pause();
+    reel.classList.toggle('stopped', !running);
+    const clip = index < 2 ? boardRecording : index === 4 ? video : null;
+    for (const media of [boardRecording,video]) if (media !== clip || !running) media.pause();
+    if (!running) return;
     if (clip) {
-      if (running) clip.play().catch(() => {
-        if (frames[index].contains(clip) && playing && visible && !document.hidden) {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => go((index + 1) % frames.length), 4500);
-        }
+      clip.play().catch(error => {
+        if (error.name !== 'AbortError' && playing && visible && !document.hidden)
+          timeout = setTimeout(() => go(clip === boardRecording ? 2 : 0),4500);
       });
-      else clip.pause();
-    } else {
-      video.pause();
-      if (running) timeout = setTimeout(() => go(index + 1), 4500);
-    }
+    } else timeout = setTimeout(() => go(index + 1),4500);
   }
   function go(next) {
-    index = next;
-    if (index === 0) boardRecording.currentTime = 0;
-    if (index === frames.length - 1) video.currentTime = 0;
+    setStage(next);
+    if (next < 2) boardRecording.currentTime = next === 0 ? 0 : ticketTime;
+    if (next === 4) video.currentTime = 0;
     renderReel();
   }
-  boardRecording.addEventListener('ended', () => go(1));
+  boardRecording.addEventListener('timeupdate', () => {
+    if (index === 0 && boardRecording.currentTime >= ticketTime) setStage(1);
+  });
+  boardRecording.addEventListener('ended', () => go(2));
   video.addEventListener('ended', () => go(0));
-  reel.querySelectorAll('.scene-target').forEach((target,i) => {
-    target.onclick = () => {
-      go(i + 1);
-      buttons[index].focus({preventScroll:true});
-    };
+  boardTarget.onclick = () => { go(1); designLink.focus({preventScroll:true}); };
+  designLink.onclick = event => {
+    event.preventDefault();
+    go(2);
+    buttons[2].focus({preventScroll:true});
+  };
+  reel.querySelectorAll('.dock-icon').forEach((target,i) => {
+    target.onclick = () => { go(i + 3); buttons[index].focus({preventScroll:true}); };
   });
   buttons.forEach((button,i) => button.onclick = () => {
     reel.classList.toggle('manual', !playing);
@@ -140,11 +149,9 @@ if (reel) {
     if (playing) reel.classList.remove('manual');
     renderReel();
   };
-  reduced.addEventListener('change', () => {
-    playing = !reduced.matches;
-    renderReel();
-  });
+  reduced.addEventListener('change', () => { playing = !reduced.matches; renderReel(); });
   document.addEventListener('visibilitychange',renderReel);
   new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; renderReel(); }).observe(reel);
-  renderReel();
+  if (location.hash === '#hero-design') go(2);
+  else renderReel();
 }
