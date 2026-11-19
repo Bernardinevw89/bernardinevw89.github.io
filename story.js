@@ -7,6 +7,20 @@ const read = route.querySelector('.route-read');
 const reveal = route.querySelector('clipPath rect');
 let routeStart = 0;
 let routeHeight = 0;
+const staticRoute = matchMedia('(prefers-reduced-motion: reduce)');
+let revealed = 0, revealTarget = 0, revealFrame = 0, revealTime = 0;
+function easeReveal(now) {
+  const elapsed = Math.max(0, now - revealTime);
+  revealTime = now;
+  revealed += (revealTarget - revealed) * (1 - Math.exp(-elapsed / 115));
+  if (Math.abs(revealTarget - revealed) < .75) {
+    revealed = revealTarget;
+    revealFrame = 0;
+  } else {
+    revealFrame = requestAnimationFrame(easeReveal);
+  }
+  reveal.setAttribute('height', revealed);
+}
 let active;
 function focusChapter(chapter) {
   if (active === chapter) return;
@@ -14,10 +28,21 @@ function focusChapter(chapter) {
   active = chapter;
   if (active) active.classList.add('current');
 }
-function sync() {
+function sync(snap = false) {
   if (innerWidth > 720) {
-    const travelled = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .74 - routeStart));
-    reveal.setAttribute('height', travelled);
+    revealTarget = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .74 - routeStart));
+    if (snap === true || staticRoute.matches) {
+      cancelAnimationFrame(revealFrame);
+      revealFrame = 0;
+      revealed = revealTarget;
+      reveal.setAttribute('height', revealed);
+    } else if (!revealFrame && revealed !== revealTarget) {
+      revealTime = performance.now();
+      revealFrame = requestAnimationFrame(easeReveal);
+    }
+  } else if (revealFrame) {
+    cancelAnimationFrame(revealFrame);
+    revealFrame = 0;
   }
   const line = innerHeight / 2;
   const target = chapters.find(chapter => {
@@ -75,7 +100,7 @@ function draw() {
     guide.setAttribute('d', d);
     read.setAttribute('d', d);
   }
-  sync();
+  sync(true);
 }
 container.classList.add('enhanced');
 container.addEventListener('focusin',event => {
@@ -84,6 +109,8 @@ container.addEventListener('focusin',event => {
 });
 addEventListener('scroll',sync,{passive:true});
 addEventListener('resize',draw);
+addEventListener('pageshow', () => requestAnimationFrame(() => sync(true)));
+staticRoute.addEventListener('change', () => sync(true));
 const routeLayout = new ResizeObserver(draw);
 routeLayout.observe(container);
 for (const area of document.querySelectorAll('.journeyintro, .chaptertext, .evidence')) routeLayout.observe(area);
