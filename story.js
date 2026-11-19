@@ -86,7 +86,8 @@ if (reel) {
   const frames = [...reel.querySelectorAll('.reel-frame')];
   const buttons = [...reel.querySelectorAll('.reel-steps button')];
   const toggle = reel.querySelector('.reel-toggle');
-  const video = reel.querySelector('video');
+  const video = reel.querySelector('.sway-video');
+  const boardRecording = reel.querySelector('.board-recording');
   let index = 0;
   let playing = !reduced.matches;
   let visible = true;
@@ -100,15 +101,17 @@ if (reel) {
     toggle.setAttribute('aria-label', label + ' animation');
     reel.classList.toggle('stopped', !playing || !visible || document.hidden);
     const running = playing && visible && !document.hidden;
-    if (index === frames.length - 1) {
-      if (running) video.play().catch(() => {
-        if (index === frames.length - 1 && !video.error && !video.paused) return;
-        if (index === frames.length - 1 && playing && visible && !document.hidden) {
+    const clip = index === 0 ? boardRecording : index === frames.length - 1 ? video : null;
+    if (clip !== boardRecording) boardRecording.pause();
+    if (clip !== video) video.pause();
+    if (clip) {
+      if (running) clip.play().catch(() => {
+        if (frames[index].contains(clip) && playing && visible && !document.hidden) {
           clearTimeout(timeout);
-          timeout = setTimeout(() => go(0), 4500);
+          timeout = setTimeout(() => go((index + 1) % frames.length), 4500);
         }
       });
-      else video.pause();
+      else clip.pause();
     } else {
       video.pause();
       if (running) timeout = setTimeout(() => go(index + 1), 4500);
@@ -116,9 +119,11 @@ if (reel) {
   }
   function go(next) {
     index = next;
+    if (index === 0) boardRecording.currentTime = 0;
     if (index === frames.length - 1) video.currentTime = 0;
     renderReel();
   }
+  boardRecording.addEventListener('ended', () => go(1));
   video.addEventListener('ended', () => go(0));
   reel.querySelectorAll('.scene-target').forEach((target,i) => {
     target.onclick = () => {
