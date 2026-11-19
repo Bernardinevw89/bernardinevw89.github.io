@@ -392,7 +392,7 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chapters .chaptertext{background:none;box-shadow:none}
 }
 @media(max-width:720px) and (prefers-reduced-motion:reduce){
- .route .route-guide{stroke:#bd7d95}
+ .chapters>.route .route-guide{stroke:#bd7d95}
  .route .route-read{display:none}
 }
 
