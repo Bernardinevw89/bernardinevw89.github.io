@@ -71,31 +71,22 @@ function draw() {
     routeHeight = box.height - offset;
     route.style.setProperty('--route-start', offset + 'px');
     const center = box.width / 2;
-    const blocks = chapters.map(chapter => {
-      const copy = chapter.querySelector('.chaptertext').getBoundingClientRect();
+    const notes = chapters.map(chapter => {
       const card = chapter.querySelector('.evidence').getBoundingClientRect();
-      const x = card.left + card.width / 2 - box.left;
-      const side = Math.sign(x - center);
       return {
-        entry: x - side * card.width * .12,
-        exit: x + side * card.width * .21,
-        top: Math.min(copy.top, card.top) - box.top - offset - 20,
-        bottom: Math.max(copy.bottom, card.bottom) - box.top - offset + 20
+        x: card.left + card.width / 2 - box.left,
+        y: card.top + card.height / 2 - box.top - offset
       };
     });
-    const firstX = cta ? cta.left + cta.width / 2 - box.left : center;
-    let d = `M ${firstX} 0`;
-    // Cross between notes only in the whitespace, and travel behind each note in one continuous stroke.
-    function sweep(x, y, nextX, nextY) {
-      const span = Math.max(0, nextY - y);
-      d += ` C ${x} ${y+span*.54} ${nextX} ${nextY-span*.54} ${nextX} ${nextY}`;
-    }
-    sweep(firstX, 0, blocks[0].entry, Math.max(0, blocks[0].top));
-    for (const [i, block] of blocks.entries()) {
-      const bottom = Math.min(routeHeight, block.bottom);
-      sweep(block.entry, Math.max(0, block.top), block.exit, bottom);
-      const next = blocks[i + 1];
-      sweep(block.exit, bottom, next?.entry ?? center, Math.max(bottom, next?.top ?? routeHeight));
+    const start = {x: cta ? cta.left + cta.width / 2 - box.left : center, y: 0};
+    const points = [start, ...notes, {x: center, y: routeHeight}];
+    let d = `M ${start.x} 0`;
+    // One spacious S between successive notes. Matching vertical tangents meet underneath each card.
+    for (let i = 1; i < points.length; i++) {
+      const from = points[i - 1];
+      const to = points[i];
+      const handle = (to.y - from.y) * .52;
+      d += ` C ${from.x} ${from.y+handle} ${to.x} ${to.y-handle} ${to.x} ${to.y}`;
     }
     guide.setAttribute('d', d);
     read.setAttribute('d', d);
