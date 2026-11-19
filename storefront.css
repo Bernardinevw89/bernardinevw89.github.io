@@ -245,6 +245,7 @@ body {
   overflow: hidden;
 }
 #br-store .window {
+  container-type: inline-size;
   flex: 1;
   overflow: hidden;
 }
@@ -253,8 +254,28 @@ body {
   width: max-content;
   animation: br-run 29s linear infinite;
 }
-#br-store .ribbon span {
-  white-space: pre;
+#br-store .ribbon ul {
+  display: flex;
+  flex: none;
+  min-width: 100cqw;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#br-store .ribbon li {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-inline: 12px;
+}
+#br-store .ribbon li::after {
+  content: "✳" / "";
+  font: 16px Arial, sans-serif;
+}
+#br-store .ribbon ul {
+  white-space: nowrap;
   font: bold italic 21px Georgia;
 }
 #br-store .strip button {
@@ -520,7 +541,7 @@ body {
   color: var(--accent);
   border-color: var(--line);
 }
-#br-store .ribbon span {
+#br-store .ribbon ul {
   font-weight: 400;
 }
 #br-store .collection {
@@ -849,11 +870,11 @@ body {
     sans-serif;
 }
 #br-store :is(.collection, .gallery-ed, .appfeature, .proof) {
-  padding: var(--space) var(--edge);
+  padding: var(--space) max(var(--edge), calc((100% - 1280px) / 2));
 }
 #br-store .proof {
   background: var(--paper);
-  grid-template-columns: 5fr 7fr;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
   gap: var(--wide);
 }
 #br-store .proof h1 {
@@ -919,7 +940,7 @@ body {
   padding-block: 8px;
   border-block: 1px solid var(--line);
 }
-#br-store .ribbon span {
+#br-store .ribbon ul {
   font: 400 italic var(--item) / 1.15 Georgia;
 }
 #br-store .cards {
@@ -1097,4 +1118,9 @@ body {
 }
 #br-store .skip-link:focus {
   transform: none;
+}
+
+#br-store .proofcopy p {
+  max-width: 40ch;
+  font-size: var(--body);
 }
