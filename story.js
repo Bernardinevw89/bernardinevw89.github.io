@@ -4,29 +4,11 @@ const container = document.querySelector('.chapters');
 const path = document.querySelector('.route path');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active;
-let timer;
-function show(chapter, step) {
-  chapter.dataset.step = step;
-  chapter.querySelectorAll('.shot').forEach((shot,i) => { shot.hidden = i !== step; });
-  chapter.querySelectorAll('.stages i').forEach((dot,i) => dot.classList.toggle('done',i <= step));
-
-}
-function play(chapter) {
-  clearInterval(timer);
-  if (!chapter || reduced.matches || document.hidden) return;
-  timer = setInterval(() => {
-    show(chapter, (Number(chapter.dataset.step) + 1) % chapter.querySelectorAll('.shot').length);
-  }, 2700);
-}
 function focusChapter(chapter) {
   if (active === chapter) return;
   active?.classList.remove('current');
   active = chapter;
-  if (active) {
-    active.classList.add('current');
-    if (innerWidth > 720) show(active,0);
-  }
-  play(active);
+  if (active) active.classList.add('current');
 }
 function sync() {
   if (!reduced.matches) path.style.strokeDashoffset = String(-scrollY * 0.1);
@@ -62,15 +44,6 @@ function draw() {
   path.setAttribute('d',d);
   sync();
 }
-for (const chapter of chapters) {
-  show(chapter,0);
-  chapter.querySelector('.play').onclick = () => {
-    clearInterval(timer);
-    const next = (Number(chapter.dataset.step)+1)%3;
-    show(chapter,next);
-    play(innerWidth <= 720 ? active : chapter);
-  };
-}
 container.classList.add('enhanced');
 container.addEventListener('focusin',event => {
   const chapter = event.target.closest('.chapter');
@@ -79,8 +52,6 @@ container.addEventListener('focusin',event => {
 addEventListener('scroll',sync,{passive:true});
 addEventListener('resize',draw);
 new ResizeObserver(draw).observe(container);
-document.addEventListener('visibilitychange',() => play(active));
-reduced.addEventListener('change',() => play(active));
 draw();
 
 const opening = document.querySelector('.opening');
