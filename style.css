@@ -383,3 +383,13 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chapter{padding-inline:6vw}
  .chaptertext,.chapter .movie{width:100%;max-width:520px;justify-self:center}
 }
+
+/* Mobile chapters carry their own progress cue; the desktop thread is unchanged. */
+@media(max-width:720px){
+ .chapters>.route{display:none}
+}
+@media(max-width:720px) and (prefers-reduced-motion:no-preference){
+ .chapters.enhanced .chaptertext>small{position:relative;display:inline-block}
+ .chapters.enhanced .chaptertext>small::after{content:"";position:absolute;inset-inline-start:calc(100% + 10px);inset-block-start:50%;transform:translateY(-50%);width:30px;height:2px;border-radius:999px;background:linear-gradient(var(--rose),var(--rose)) 0 center/0 100% no-repeat,#dbcdd1;transition:background-size .45s ease-out}
+ .chapters.enhanced .chapter-reached .chaptertext>small::after{background-size:100% 100%}
+}

@@ -35,6 +35,13 @@ function sync() {
     return box.top <= line && box.bottom >= line;
   });
   focusChapter(target);
+  // On mobile, keep the progress marker for every chapter the reader has reached.
+  if (innerWidth <= 720 && !reduced.matches) {
+    const threshold = innerHeight * .72;
+    for (const chapter of chapters) {
+      if (chapter.getBoundingClientRect().top <= threshold) chapter.classList.add('chapter-reached');
+    }
+  }
 }
 function draw() {
   const w = container.clientWidth;
