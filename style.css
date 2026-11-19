@@ -290,3 +290,25 @@ body > header { min-height: 76px; }
   @keyframes still-dissolve {from{opacity:0}to{opacity:1}}
 }
 .sprint-reel.stopped .reel-frame.arriving {animation-play-state:running!important}
+
+.fan {width:min(100%,620px);min-width:0;justify-self:center}
+.fan-deck {position:relative;isolation:isolate;aspect-ratio:1.45}
+.fan-card {margin:0;position:absolute;inset:16% 8% auto;background:#fffcfa;border:1px solid #d8cdd0;border-radius:9px;overflow:hidden;box-shadow:0 12px 34px -12px #49243452;transform-origin:50% 92%}
+.fan-card img {display:block;width:100%;height:auto;aspect-ratio:1.78;object-fit:contain;background:#fff}
+.fan-card:nth-child(2) img {background:#1e1e1e}
+.fan-card:nth-child(3) img {background:#252727}
+.fan-card figcaption {display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 14px;border-top:1px solid #e3dadb;letter-spacing:0;color:#413439}
+.fan-card figcaption span {font:600 .94rem system-ui,sans-serif}
+.fan-card figcaption strong {font:500 .72rem var(--mono);color:#805360}
+.fan-card[data-depth="0"] {z-index:4;transform:translateY(6%)}
+.fan-card[data-depth="1"] {z-index:3;transform:translate(-6%,-4%) rotate(-8deg) scale(.96)}
+.fan-card[data-depth="2"] {z-index:2;transform:translate(7%,-8%) rotate(9deg) scale(.95)}
+.fan-card[data-depth="3"] {z-index:1;transform:translate(-1%,-13%) rotate(-2deg) scale(.92)}
+.fan-nav,.fan-tabs {display:flex;align-items:center;gap:4px}
+.fan-nav {justify-content:space-between;margin:8px 5% 0}
+.fan-nav button {background:transparent;color:#65535a;border:0;font:500 .8rem system-ui,sans-serif;padding:7px;cursor:pointer}
+.fan-tabs button[aria-pressed=true]{border-bottom:2px solid #994968;color:#672e44}
+.fan-toggle{text-decoration:underline;text-underline-offset:3px}
+@media(prefers-reduced-motion:no-preference){.fan-card {transition:transform .65s cubic-bezier(.2,.7,.25,1),box-shadow .65s}}
+@media(max-width:720px){.fan{width:min(100%,460px,58svh)}.fan-card figcaption{padding:6px 9px}.fan-card figcaption span{font-size:.78rem}.fan-card figcaption strong,.fan-nav button{font-size:.68rem}.fan-nav{margin-top:10px}}
+@media(max-width:720px) and (max-height:650px){.fan-deck{aspect-ratio:1.45}.fan{width:min(100%,43svh)}.fan-card figcaption{padding:3px 6px}.fan-nav{margin:21px 0 0}.fan-nav button{padding:3px;font-size:.62rem}}

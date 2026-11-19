@@ -81,63 +81,35 @@ if (opening) {
   new ResizeObserver(fitOpening).observe(pageHeader);
 }
 
-const reel = document.querySelector('.reel');
-if (reel) {
-  const frames = [...reel.querySelectorAll('.reel-frame')];
-  const buttons = [...reel.querySelectorAll('.reel-steps button')];
-  const toggle = reel.querySelector('.reel-toggle');
-  const video = reel.querySelector('.sway-video');
-  let index = 0;
+const fan = document.querySelector('.fan');
+if (fan) {
+  const cards = [...fan.querySelectorAll('.fan-card')];
+  const tabs = [...fan.querySelectorAll('.fan-tabs button')];
+  const toggle = fan.querySelector('.fan-toggle');
+  let current = location.hash === '#hero-design' ? 1 : 0;
   let playing = !reduced.matches;
-  let visible = true;
-  let timer;
-  let fadeTimer;
-  function schedule() {
-    clearTimeout(timer);
-    const running = playing && visible && !document.hidden;
-    reel.classList.toggle('stopped', !running);
-    toggle.textContent = playing ? 'Pause' : 'Play';
-    toggle.setAttribute('aria-label', toggle.textContent + ' animation');
-    if (!running || index !== 4) video.pause();
-    if (!running) return;
-    if (index === 4) {
-      video.play().catch(error => {
-        if (error.name !== 'AbortError' && playing && visible && !document.hidden && index === 4)
-          timer = setTimeout(() => go(0), 4000);
-      });
-    } else timer = setTimeout(() => go(index + 1), index === 3 ? 4400 : 3000);
-  }
-  function go(next) {
-    clearTimeout(fadeTimer);
-    const previous = index;
-    index = next;
-    const blend = !reduced.matches && previous !== next;
-    frames.forEach((frame,i) => {
-      const leaving = blend && i === previous;
-      frame.hidden = i !== next && !leaving;
-      frame.inert = i !== next;
-      frame.classList.toggle('leaving', leaving);
-      frame.classList.toggle('arriving', blend && i === next);
+  let visible = false;
+  let rotation;
+  function updateFan() {
+    clearTimeout(rotation);
+    cards.forEach((card, i) => {
+      card.dataset.depth = (i - current + cards.length) % cards.length;
+      card.setAttribute('aria-hidden', String(i !== current));
+      tabs[i].setAttribute('aria-pressed', String(i === current));
     });
-    if (blend) fadeTimer = setTimeout(() => {
-      frames[previous].hidden = true;
-      frames[previous].classList.remove('leaving');
-    }, 500);
-    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === next)));
-    if (next === 4) video.currentTime = 0;
-    schedule();
+    toggle.textContent = playing ? 'Pause' : 'Play';
+    toggle.setAttribute('aria-label', toggle.textContent + ' slideshow');
+    if (playing && visible && !document.hidden) {
+      rotation = setTimeout(() => {
+        current = (current + 1) % cards.length;
+        updateFan();
+      }, 3800);
+    }
   }
-  video.addEventListener('ended', () => go(0));
-  function follow(next) {
-    go(next);
-    buttons[next].focus({preventScroll:true});
-  }
-  reel.querySelector('.capture-target').onclick = () => follow(1);
-  reel.querySelector('.ticket-hotspot').onclick = event => { event.preventDefault(); follow(2); };
-  buttons.forEach((button,i) => button.onclick = () => go(i));
-  toggle.onclick = () => { playing = !playing; schedule(); };
-  reduced.addEventListener('change', () => { playing = !reduced.matches; schedule(); });
-  document.addEventListener('visibilitychange',schedule);
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }).observe(reel);
-  go(location.hash === '#hero-design' ? 2 : 0);
+  tabs.forEach((tab, i) => tab.onclick = () => { current = i; updateFan(); });
+  toggle.onclick = () => { playing = !playing; updateFan(); };
+  reduced.addEventListener('change', () => { playing = !reduced.matches; updateFan(); });
+  document.addEventListener('visibilitychange', updateFan);
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; updateFan(); }).observe(fan);
+  updateFan();
 }
