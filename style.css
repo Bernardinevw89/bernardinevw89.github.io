@@ -347,3 +347,5 @@ body > header { min-height: 76px; }
 .type-line>span{grid-area:1/1;text-align:center}
 .type-measure{visibility:hidden}
 @media(max-width:720px){.hero-swap .opening-copy .type-heading{font-size:clamp(1.75rem,11vw,5.5rem)}}
+
+.hero-swap .byline::before,.hero-swap .byline::after{content:none}

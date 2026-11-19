@@ -115,31 +115,39 @@ if (comparison) {
   const output = document.querySelector('[data-type-output]');
   if (!output || !window.matchMedia) return;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (motion.matches) return;
-
   const phrases = ['Shopify themes', 'Shopify apps', 'web interfaces'];
-  const pause = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
-  let stopped = false;
+  let index = 0, count = phrases[0].length, deleting = true, timer;
 
-  if (motion.addEventListener) motion.addEventListener('change', ({ matches }) => {
-    if (!matches) return;
-    stopped = true;
-    output.textContent = phrases[phrases.length - 1];
-  });
+  function schedule(delay) {
+    window.clearTimeout(timer);
+    if (!motion.matches && !document.hidden) timer = window.setTimeout(tick, delay);
+  }
 
-  (async () => {
-    for (let i = 1; i < phrases.length; i++) {
-      await pause(950);
-      for (let n = phrases[i - 1].length - 1; n >= 0; n--) {
-        if (stopped) return;
-        output.textContent = phrases[i - 1].slice(0, n);
-        await pause(30);
-      }
-      for (let n = 1; n <= phrases[i].length; n++) {
-        if (stopped) return;
-        output.textContent = phrases[i].slice(0, n);
-        await pause(51);
-      }
+  function tick() {
+    if (motion.matches || document.hidden) return;
+    count += deleting ? -1 : 1;
+    output.textContent = phrases[index].slice(0, count);
+    if (deleting && count === 0) {
+      index = (index + 1) % phrases.length;
+      deleting = false;
+      schedule(150);
+    } else if (!deleting && count === phrases[index].length) {
+      deleting = true;
+      schedule(1800);
+    } else {
+      schedule(deleting ? 39 : 65);
     }
-  })();
+  }
+
+  document.addEventListener('visibilitychange', () => schedule(450));
+  if (motion.addEventListener) motion.addEventListener('change', () => {
+    if (motion.matches) {
+      index = 0;
+      count = phrases[0].length;
+      deleting = true;
+      output.textContent = phrases[0];
+    }
+    schedule(1800);
+  });
+  schedule(1800);
 })();
