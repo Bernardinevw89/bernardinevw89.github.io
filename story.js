@@ -357,7 +357,7 @@ if (comparison) {
       if (app) {
         const original = card.querySelector('.project-image');
         const art = original.querySelector('img');
-        showPreset({name, url:original.href, src:art.src, alt:art.alt, app}, false);
+        showPreset({name, url:card.querySelector('.project-actions a').href, src:art.src, alt:art.alt, app}, false);
       } else {
         const choices = [];
         function select(index, announce) {
