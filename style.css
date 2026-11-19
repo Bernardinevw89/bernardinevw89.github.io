@@ -496,7 +496,7 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .project-image img{display:block;width:100%;height:auto;aspect-ratio:1.38;object-fit:cover;object-position:center 12%}
 .project-card-copy{padding:12px 0 4px}
 .project-card-copy>small,.project-dialog-type{color:var(--rose)}
-.project-card h3{font-size:clamp(1.72rem,2.3vw,2.65rem);margin:.16em 0 .25em}
+.project-card h3{font-size:clamp(1.42rem,1.75vw,1.95rem);margin:.16em 0 .25em}
 .project-actions{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
 .project-actions:has(button[hidden]):not(:has(a)){display:none}
 .project-actions>a,.project-fallback{font-size:.88rem}
