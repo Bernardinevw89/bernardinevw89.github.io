@@ -11,7 +11,7 @@ function focusChapter(chapter) {
   if (active) active.classList.add('current');
 }
 function sync() {
-  if (!reduced.matches) path.style.strokeDashoffset = String(-scrollY * 0.1);
+  path.style.strokeDashoffset = reduced.matches ? '' : String(-scrollY * 0.1);
   const line = innerHeight / 2;
   const target = chapters.find(chapter => {
     const box = chapter.getBoundingClientRect();
@@ -31,17 +31,25 @@ function sync() {
   }
 }
 function draw() {
-  const w = container.clientWidth;
-  const mobile = innerWidth <= 720;
-  let d = 'M ' + w * .5 + ' 0';
-  for (const [i,chapter] of chapters.entries()) {
+  const lane = path.ownerSVGElement;
+  const x = lane.clientWidth / 2;
+  const stops = lane.querySelector('.route-stops');
+  const markers = [];
+  let d = 'M ' + x + ' 0';
+  for (const [i, chapter] of chapters.entries()) {
     const y = chapter.offsetTop;
     const h = chapter.offsetHeight;
-    const x = w * .5;
-    const bend = w * (mobile ? .12 : .29) * (i % 2 ? -1 : 1);
-    d += ' C '+(x+bend)+' '+(y+h*.32)+' '+(x-bend)+' '+(y+h*.7)+' '+x+' '+(y+h);
+    const bend = x * .73 * (i % 2 ? -1 : 1);
+    d += ` C ${x} ${y+h*.16} ${x+bend} ${y+h*.30} ${x+bend} ${y+h*.5}`;
+    d += ` S ${x} ${y+h*.84} ${x} ${y+h}`;
+    const dot = document.createElementNS(lane.namespaceURI, 'circle');
+    dot.setAttribute('cx', x + bend);
+    dot.setAttribute('cy', y + h * .5);
+    dot.setAttribute('r', '4');
+    markers.push(dot);
   }
-  path.setAttribute('d',d);
+  path.setAttribute('d', d);
+  stops?.replaceChildren(...markers);
   sync();
 }
 container.classList.add('enhanced');

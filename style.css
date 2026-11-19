@@ -429,9 +429,6 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .evidence .flow-feature-image figcaption{padding:6px 0 0;color:#775361;letter-spacing:.03em}
 .editorial-flow h3,.editorial-app h3{margin:.18em 0 .25em}
 .editorial-demo-link{display:inline-block;color:#78364e;margin-top:9px;font-weight:650;text-decoration-thickness:1px}
-.editorial-examples{border-top:1px solid var(--line);padding-top:12px;margin-top:15px}
-.editorial-examples ul{display:flex;align-items:center;flex-wrap:wrap;gap:5px 14px;list-style:none;margin:3px 0 0;padding:0;font-size:.86rem}
-.editorial-tip{display:block;font-size:.61rem;margin-top:7px;text-transform:none}
 .editorial-app{display:grid;grid-template-columns:minmax(90px,.76fr) 1fr;align-items:center;gap:clamp(12px,3vw,32px);border-block:1px solid var(--line);padding-block:14px}
 .editorial-app img{width:100%;height:auto;display:block;border-radius:6px}
 .editorial-workflow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));counter-reset:workflow;gap:12px 18px}
@@ -445,4 +442,37 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .editorial-handoffs{grid-template-columns:1fr}
  .editorial-handoffs dt{padding-bottom:0}
  .editorial-handoffs dd{border-top:0;padding-top:4px}
+}
+
+/* The winding route has a lane of its own, between the two equal columns. */
+@media(min-width:721px){
+ .chapters{--route-lane:clamp(54px,9vw,148px)}
+ .chapters>.route{inset:0 auto 0 50%;width:var(--route-lane);transform:translateX(-50%);overflow:hidden}
+ .chapters .chapter{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--route-lane)}
+ .chapters .chaptertext{min-width:0;background:none;box-shadow:none;overflow-wrap:anywhere}
+ .chapters .evidence{min-block-size:20rem;display:flex;flex-direction:column;justify-content:center}
+}
+.route-stops circle{fill:var(--paper);stroke:#a36b80;stroke-width:1.5px}
+.chapters .evidence{
+ border:1px solid var(--line);border-top-color:#d1acb9;border-radius:6px;
+ background:#f7f4f1;padding:clamp(14px,2vw,25px);overflow-wrap:anywhere
+}
+.chapters .evidence h3{font-size:clamp(1.52rem,2.25vw,2.35rem);margin:.18em 0 .42em}
+.chapters .evidence p,.editorial-handoffs dd{font-size:.875rem;line-height:1.42}
+.editorial-tree li,.editorial-handoffs dt,.editorial-handoffs dd{padding-block:8px}
+.editorial-tree li::before{top:17px}
+.editorial-branches{gap:12px}
+.editorial-handoffs{font-size:.875rem}
+.flow-feature-image{margin:0 0 .6rem}
+.flow-feature-image img{height:clamp(96px,12vw,170px);object-fit:cover;object-position:center 23%;border-radius:3px}
+.editorial-app figure{width:min(54%,146px);margin-bottom:.85rem}
+.editorial-workflow{gap:9px 14px}
+@media(max-width:720px){
+ .chapters .evidence{min-block-size:0}
+ .chapters .editorial-app{display:grid}
+ .editorial-app figure{width:100%;margin:0}
+}
+@media(max-width:350px){
+ .editorial-handoffs dt{padding-bottom:0}
+ .editorial-handoffs dd{padding-top:4px}
 }
