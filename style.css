@@ -446,10 +446,10 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chapters .evidence{min-block-size:20rem;display:flex;flex-direction:column;justify-content:center}
 }
 .route .route-guide{stroke:#e0cdd4}
-.route .route-read{stroke:#79354e}
+.route .route-read{stroke:var(--rose)}
 .chapters .evidence{
  --line:#d9d7da;border:1px solid var(--line);border-radius:6px;
- background:#f2f2f3;box-shadow:0 10px 26px #332d3710,0 1px 2px #332d3709;
+ background:#f8f8f9;box-shadow:0 10px 26px #332d370c,0 1px 2px #332d3708;
  padding:clamp(16px,2.25vw,32px);overflow-wrap:anywhere
 }
 .chapters .evidence h3{font-size:clamp(1.52rem,2.25vw,2.35rem);margin:.18em 0 .42em}

@@ -49,8 +49,11 @@ function draw() {
     const blocks = chapters.map(chapter => {
       const copy = chapter.querySelector('.chaptertext').getBoundingClientRect();
       const card = chapter.querySelector('.evidence').getBoundingClientRect();
+      const x = card.left + card.width / 2 - box.left;
+      const side = Math.sign(x - center);
       return {
-        x: card.left + card.width / 2 - box.left,
+        entry: x - side * card.width * .12,
+        exit: x + side * card.width * .21,
         top: Math.min(copy.top, card.top) - box.top - offset - 20,
         bottom: Math.max(copy.bottom, card.bottom) - box.top - offset + 20
       };
@@ -60,14 +63,14 @@ function draw() {
     // Cross between notes only in the whitespace, and travel behind each note in one continuous stroke.
     function sweep(x, y, nextX, nextY) {
       const span = Math.max(0, nextY - y);
-      d += ` C ${x} ${y+span*.70} ${nextX} ${nextY-span*.70} ${nextX} ${nextY}`;
+      d += ` C ${x} ${y+span*.54} ${nextX} ${nextY-span*.54} ${nextX} ${nextY}`;
     }
-    sweep(firstX, 0, blocks[0].x, Math.max(0, blocks[0].top));
+    sweep(firstX, 0, blocks[0].entry, Math.max(0, blocks[0].top));
     for (const [i, block] of blocks.entries()) {
       const bottom = Math.min(routeHeight, block.bottom);
-      d += ` L ${block.x} ${bottom}`;
+      sweep(block.entry, Math.max(0, block.top), block.exit, bottom);
       const next = blocks[i + 1];
-      sweep(block.x, bottom, next?.x ?? center, Math.max(bottom, next?.top ?? routeHeight));
+      sweep(block.exit, bottom, next?.entry ?? center, Math.max(bottom, next?.top ?? routeHeight));
     }
     guide.setAttribute('d', d);
     read.setAttribute('d', d);
