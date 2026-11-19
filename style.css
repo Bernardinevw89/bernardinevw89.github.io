@@ -315,3 +315,26 @@ body > header { min-height: 76px; }
 .hero-skills dl { margin: 14px 0; padding-left: 16px; border-left: 2px solid #dfc3ce; max-width: 54ch; }
 .hero-skills dt { margin: 12px 0 2px; font-weight: 650; }
 .hero-skills dd { margin: 0; font-size: .93rem; line-height: 1.5; }
+
+/* Typography-led hero. Existing section styles remain unchanged. */
+.journeyintro.opening.hero-swap{display:grid;grid-template-columns:minmax(0,1fr);align-content:center;justify-items:center;text-align:center;position:relative;isolation:isolate;min-height:calc(86svh - var(--nav-height,76px));padding-block:clamp(64px,10vw,140px);background:radial-gradient(ellipse at 50% 39%,#eadde047,transparent 66%),var(--paper)}
+.hero-swap .opening-copy{max-width:850px;width:100%}
+.hero-swap .byline{color:var(--rose)}
+.hero-swap .opening-copy h1{font-size:clamp(3.25rem,8vw,9rem);max-width:13ch;margin:0.19em auto;line-height:.92}
+.hero-swap .opening-copy>p{max-width:53ch;margin-inline:auto}
+.hero-swap .hero-skills{margin-inline:auto}
+.hero-swap .hero-skills dl{text-align:left}
+.hero-swap .opening-link{background:var(--ink);color:white;border-radius:999px;padding:7px 13px 7px 19px}
+.hero-swap .opening-link span{border-color:#ccb4bd}
+@media(max-width:720px){.journeyintro.opening.hero-swap{min-height:0;padding-block:64px}.hero-swap .opening-copy h1{font-size:clamp(2.75rem,12vw,5.5rem)}}
+
+/* Skills, after the experience chapters. */
+.skills-section{background:#f2eded}
+.skills-section .core-tools{margin:0 0 24px;font:600 .8rem/1.65 var(--mono);color:var(--rose)}
+.skills-section dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;margin:0}
+.skills-section dt{font-weight:650;border-top:1px solid var(--line);padding-top:15px}
+.skills-section dd{margin:3px 0 20px;color:#5d5054}
+.skills-section dt:nth-of-type(odd),.skills-section dd:nth-of-type(odd){grid-column:1}
+.skills-section dt:nth-of-type(even),.skills-section dd:nth-of-type(even){grid-column:2}
+@media(min-width:721px){.skills-section dt:nth-of-type(2){grid-row:1}.skills-section dd:nth-of-type(2){grid-row:2}.skills-section dt:nth-of-type(4){grid-row:3}.skills-section dd:nth-of-type(4){grid-row:4}.skills-section dt:nth-of-type(6){grid-row:5}.skills-section dd:nth-of-type(6){grid-row:6}}
+@media(max-width:720px){.skills-section dl{display:block}}
