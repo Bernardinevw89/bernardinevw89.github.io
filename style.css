@@ -84,3 +84,49 @@ body > header { min-height: 76px; }
   .opening-copy p { font-size: .94rem; }
   .opening .opening-link { margin-top: 8px; }
 }
+
+.reel { width:min(100%,580px);justify-self:center;min-width:0 }
+.reel-window { position:relative;aspect-ratio:1.56;background:#fffcf7;border:1px solid #d8d2de;border-radius:14px;overflow:hidden;box-shadow:0 24px 65px #51415f24,0 4px 12px #51415f0d;container-type:inline-size }
+.reel-frame { position:absolute;inset:0;display:flex;flex-direction:column }
+.reel-frame[hidden] { display:none }
+.chrome,.browserbar,.taskline { font:500 clamp(.64rem,2.6cqw,.86rem)/1.45 var(--mono) }
+.chrome { display:flex;align-items:center;gap:14px;padding:2.6% 4%;background:#f1edf3;border-bottom:1px solid #ded8e2 }
+.chrome i { width:7px;height:7px;border-radius:50%;background:#ac98bd;box-shadow:10px 0 #c7bad1,20px 0 #dbd2e1;margin-right:18px }
+.brief { padding:4% 7% }
+.brief .badge { color:#577150;background:#e5eddc;border-radius:20px;padding:3px 8px;font-size:2.3cqw }
+.brief h3 { font-size:6.6cqw;margin:3% 0 2% }
+.opening .brief p { font-size:3.1cqw;line-height:1.4;max-width:34ch;margin-bottom:3% }
+.taskline { margin-top:1%;color:#695979 }
+.designboard { flex:1;position:relative;padding:3% 10% 5%;background:radial-gradient(#c9c0d2 1px,transparent 1px) 0 0/12px 12px }
+.designboard>small { font-size:2cqw;color:#68547e }
+.selection { border:1.5px solid #8871aa;position:relative }
+.selection:before,.selection:after { content:"";position:absolute;background:white;border:1px solid #8871aa;width:6px;height:6px;z-index:1 }
+.selection:before { left:-4px;top:-4px }.selection:after { right:-4px;bottom:-4px }
+.designcursor { position:absolute;right:7%;bottom:5%;background:#726081;color:white;border-radius:3px;padding:2px 6px;font:2.1cqw var(--mono) }
+.spread { display:grid;grid-template-columns:1fr 1fr;background:#f4eee4;padding:5%;gap:7%;align-items:center }
+.spread small { font-size:2cqw;color:#6b615d }.spread strong { display:block;font:normal 8.5cqw/.9 Georgia,serif;letter-spacing:-.065em;margin-top:5% }
+.print { position:relative;aspect-ratio:1.15;isolation:isolate;overflow:hidden;background:#dfd5e9 }
+.print i,.print b,.print u { display:block;position:absolute }
+.print i { width:64%;height:75%;background:#796582;border-radius:50% 50% 0 0;left:7%;bottom:-6% }
+.print b { width:48%;height:64%;background:#afa2bd;border-radius:50% 50% 0 0;right:-3%;bottom:0 }
+.print u { width:25%;aspect-ratio:1;background:#f2ddaf;border-radius:50%;left:58%;top:9% }
+.editor { flex:1;display:grid;align-content:center;gap:1.5%;background:#302b38;color:#e4d2ee;padding:4% 5%;font:2.95cqw/1.5 var(--mono) }
+.editor div { display:flex;gap:4% }.editor i { color:#aa99b3;font-style:normal }.editor code { white-space:pre;display:block;overflow:hidden;width:max-content }
+.browserbar { padding:1% 4%;background:#faf8fb;color:#756881;font-size:2.2cqw }.finished { padding:3% 5%;background:#fffaf1;flex:1 }
+.reel-controls,.reel-steps { display:flex;align-items:center;gap:4px }.reel-controls { justify-content:space-between;margin-top:12px }
+.reel-controls button { color:#53475f;background:transparent;border:0;border-radius:16px;padding:6px 9px;font:600 .73rem var(--mono);cursor:pointer }
+.reel-steps button[aria-pressed=true] { background:#e1d8ea }.reel-toggle { text-decoration:underline;text-underline-offset:3px }
+@media(prefers-reduced-motion:no-preference){
+ .reel-frame:not([hidden]) { animation:reel-enter .38s ease-out both }
+ .reel-frame:not([hidden]) .editor code { animation:reel-type .48s steps(var(--length)) var(--delay) both }
+ .reel-frame:not([hidden]) .selection { animation:reel-compose 1s ease-out both }
+ .reel-frame:not([hidden]) .finished .print>* { animation:reel-compose .8s ease-out backwards }
+ .finished .print b { animation-delay:.14s!important }.finished .print u { animation-delay:.25s!important }
+ @keyframes reel-type { from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)} }
+ @keyframes reel-enter { from{opacity:.25;translate:0 5px} }
+ @keyframes reel-compose { from{opacity:.1;scale:.92;translate:0 6px} }
+ .reel.stopped * { animation-play-state:paused!important }
+ .reel.manual * { animation:none!important }
+}
+@media(max-width:720px){.reel{width:min(100%,420px,53svh)}}
+@media(max-height:650px) and (max-width:720px){.reel{width:min(100%,36svh)}.reel-controls button{font-size:.57rem;padding:4px}.reel-controls{gap:0;margin-top:5px}}

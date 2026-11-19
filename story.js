@@ -82,3 +82,49 @@ if (opening) {
   fitOpening();
   new ResizeObserver(fitOpening).observe(pageHeader);
 }
+
+const reel = document.querySelector('.reel');
+if (reel) {
+  const frames = [...reel.querySelectorAll('.reel-frame')];
+  const buttons = [...reel.querySelectorAll('.reel-steps button')];
+  const toggle = reel.querySelector('.reel-toggle');
+  let index = 0;
+  let playing = !reduced.matches;
+  let visible = true;
+  let timeout;
+  function renderReel() {
+    clearTimeout(timeout);
+    frames.forEach((frame,i) => { frame.hidden = i !== index; });
+    buttons.forEach((button,i) => button.setAttribute('aria-pressed', String(i === index)));
+    const label = playing ? 'Pause' : index === frames.length - 1 ? 'Replay' : 'Play';
+    toggle.textContent = label;
+    toggle.setAttribute('aria-label', label + ' animation');
+    reel.classList.toggle('stopped', !playing || !visible || document.hidden);
+    if (playing && visible && !document.hidden) {
+      timeout = setTimeout(() => {
+        if (index < frames.length - 1) index++;
+        else playing = false;
+        renderReel();
+      }, 3600);
+    }
+  }
+  buttons.forEach((button,i) => button.onclick = () => {
+    index = i;
+    playing = false;
+    reel.classList.add('manual');
+    renderReel();
+  });
+  toggle.onclick = () => {
+    if (!playing && index === frames.length - 1) index = 0;
+    playing = !playing;
+    if (playing) reel.classList.remove('manual');
+    renderReel();
+  };
+  reduced.addEventListener('change', () => {
+    playing = !reduced.matches && index < frames.length - 1;
+    renderReel();
+  });
+  document.addEventListener('visibilitychange',renderReel);
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; renderReel(); }).observe(reel);
+  renderReel();
+}
