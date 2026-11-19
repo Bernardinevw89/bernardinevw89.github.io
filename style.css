@@ -164,3 +164,34 @@ body > header { min-height: 76px; }
  .reel-frame:not([hidden]) .finished .spread strong {animation:mobile-heading 4.5s both}
  @keyframes mobile-heading {0%,82%{font-size:8.5cqw}97%,100%{font-size:4cqw}}
 }
+
+.sprint-reel .reel-frame {overflow:hidden}
+.sprint {padding:4% 5%;flex:1;background:#f8f6f9}
+.sprint>small,.sprint-reel .designboard>small {font-size:2.2cqw}
+.lanes {display:grid;grid-template-columns:repeat(3,1fr);gap:2%;height:76%;margin-top:3%}
+.lanes>div {padding:7%;border-radius:6px;background:#eae6ed}
+.lanes strong {display:block;font:600 2.2cqw var(--mono);margin-bottom:12%}
+.scene-target {position:relative;font:inherit;text-align:left;color:inherit;cursor:pointer}
+.issue-card,.ghost-card {width:100%;min-height:36%;background:#fffdf8;border:1px solid #d5cddc;border-radius:5px;padding:8%;box-shadow:0 3px 9px #51415f14}
+.issue-card {font:600 2.65cqw/1.25 Georgia,serif}
+.issue-card small {display:block;font-size:1.9cqw;margin-bottom:5%}
+.ghost-card {opacity:.6;background:linear-gradient(#cec7d5,#cec7d5) 12% 30%/64% 3px no-repeat,linear-gradient(#dfdae4,#dfdae4) 12% 65%/42% 3px no-repeat,#faf8fa}
+.design-link,.dock-icon {border:1px solid #c4b7ce;border-radius:5px;background:#efe8f6;padding:1.5% 3%;font:600 2.55cqw var(--mono)}
+.figmark {display:inline-grid;place-items:center;background:#725e85;color:white;border-radius:3px;width:1.4em;height:1.4em}
+.dock-icon {position:absolute;bottom:4%;right:4%;display:flex;align-items:center;gap:.7em;z-index:2}
+.dock-icon b {font:700 1.35em var(--mono)}
+.editor .dock-icon {color:#3e3448}
+.wire-sway {display:grid;grid-template-columns:repeat(3,1fr);position:relative;border:1px solid #8b77a2;height:75%;margin-top:2%;background:#d1c2b2}
+.wire-sway i {border-right:1px solid #f1e9e3;background:linear-gradient(130deg,#cfc2b5,#a89c90)}
+.wire-sway i:nth-child(2){background:linear-gradient(145deg,#b2a39a,#887364)}
+.wire-sway strong,.wire-sway span {position:absolute;justify-self:center;color:white;text-align:center}
+.wire-sway strong {top:42%;font:bold 5.5cqw Georgia,serif}
+.wire-sway span {bottom:9%;font:2cqw var(--mono);border:1px solid white;padding:2px 6px}
+.sway-video {display:block;min-height:0;width:100%;height:100%;object-fit:contain;background:#25211f}
+.scene-target .pointer-tip,.scene-target .click-ring {pointer-events:none}
+@media(prefers-reduced-motion:no-preference){
+ .reel-frame:not([hidden]) .scene-target .pointer-tip {animation:sprint-pointer 4.5s both}
+ .reel-frame:not([hidden]) .scene-target .click-ring {animation:work-click 4.5s both}
+ @keyframes sprint-pointer{0%{opacity:0;transform:translate(12cqw,9cqw)}25%{opacity:1}75%{transform:none}83%{transform:scale(.8)}95%,100%{transform:none}}
+}
+@media(prefers-reduced-motion:reduce){.scene-target .pointer-tip,.scene-target .click-ring{display:none}}

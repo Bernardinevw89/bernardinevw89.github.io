@@ -86,6 +86,7 @@ if (reel) {
   const frames = [...reel.querySelectorAll('.reel-frame')];
   const buttons = [...reel.querySelectorAll('.reel-steps button')];
   const toggle = reel.querySelector('.reel-toggle');
+  const video = reel.querySelector('video');
   let index = 0;
   let playing = !reduced.matches;
   let visible = true;
@@ -98,17 +99,36 @@ if (reel) {
     toggle.textContent = label;
     toggle.setAttribute('aria-label', label + ' animation');
     reel.classList.toggle('stopped', !playing || !visible || document.hidden);
-    if (playing && visible && !document.hidden) {
-      timeout = setTimeout(() => {
-        index = (index + 1) % frames.length;
-        renderReel();
-      }, 4500);
+    const running = playing && visible && !document.hidden;
+    if (index === frames.length - 1) {
+      if (running) video.play().catch(() => {
+        if (index === frames.length - 1 && !video.error && !video.paused) return;
+        if (index === frames.length - 1 && playing && visible && !document.hidden) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => go(0), 4500);
+        }
+      });
+      else video.pause();
+    } else {
+      video.pause();
+      if (running) timeout = setTimeout(() => go(index + 1), 4500);
     }
   }
-  buttons.forEach((button,i) => button.onclick = () => {
-    index = i;
-    reel.classList.toggle('manual', !playing);
+  function go(next) {
+    index = next;
+    if (index === frames.length - 1) video.currentTime = 0;
     renderReel();
+  }
+  video.addEventListener('ended', () => go(0));
+  reel.querySelectorAll('.scene-target').forEach((target,i) => {
+    target.onclick = () => {
+      go(i + 1);
+      buttons[index].focus({preventScroll:true});
+    };
+  });
+  buttons.forEach((button,i) => button.onclick = () => {
+    reel.classList.toggle('manual', !playing);
+    go(i);
   });
   toggle.onclick = () => {
     playing = !playing;
