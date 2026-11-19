@@ -1,0 +1,117 @@
+{
+  "Flow": [
+    {
+      "name": "Flow",
+      "url": "https://themes.shopify.com/themes/flow/presets/flow",
+      "image": "assets/flow.webp"
+    },
+    {
+      "name": "Grain",
+      "url": "https://themes.shopify.com/themes/flow/presets/grain",
+      "image": "assets/grain.webp"
+    },
+    {
+      "name": "Timeless",
+      "url": "https://themes.shopify.com/themes/flow/presets/timeless",
+      "image": "assets/timeless.webp"
+    },
+    {
+      "name": "Nectar",
+      "url": "https://themes.shopify.com/themes/flow/presets/nectar",
+      "image": "assets/nectar.webp"
+    },
+    {
+      "name": "Sanctuary",
+      "url": "https://themes.shopify.com/themes/flow/presets/sanctuary",
+      "image": "assets/sanctuary.webp"
+    }
+  ],
+  "Envy": [
+    {
+      "name": "Envy",
+      "url": "https://themes.shopify.com/themes/envy/presets/envy",
+      "image": "assets/envy.webp"
+    },
+    {
+      "name": "Court",
+      "url": "https://themes.shopify.com/themes/envy/presets/court",
+      "image": "assets/court.webp"
+    },
+    {
+      "name": "Enamel",
+      "url": "https://themes.shopify.com/themes/envy/presets/enamel",
+      "image": "assets/enamel.webp"
+    },
+    {
+      "name": "Graft",
+      "url": "https://themes.shopify.com/themes/envy/presets/graft",
+      "image": "assets/graft.webp"
+    },
+    {
+      "name": "Pedal",
+      "url": "https://themes.shopify.com/themes/envy/presets/pedal",
+      "image": "assets/pedal.webp"
+    }
+  ],
+  "Capital": [
+    {
+      "name": "Capital",
+      "url": "https://themes.shopify.com/themes/capital/presets/capital",
+      "image": "assets/capital.webp"
+    },
+    {
+      "name": "Nice Try",
+      "url": "https://themes.shopify.com/themes/capital/presets/nice-try",
+      "image": "assets/nice-try.webp"
+    },
+    {
+      "name": "Face Value",
+      "url": "https://themes.shopify.com/themes/capital/presets/face-value",
+      "image": "assets/face-value.webp"
+    },
+    {
+      "name": "Mint",
+      "url": "https://themes.shopify.com/themes/capital/presets/mint",
+      "image": "assets/mint.webp"
+    },
+    {
+      "name": "Off Lead",
+      "url": "https://themes.shopify.com/themes/capital/presets/off-lead",
+      "image": "assets/off-lead.webp"
+    }
+  ],
+  "Halftone": [
+    {
+      "name": "Halftone",
+      "url": "https://themes.shopify.com/themes/halftone/presets/halftone",
+      "image": "assets/halftone.webp"
+    },
+    {
+      "name": "Pocket",
+      "url": "https://themes.shopify.com/themes/halftone/presets/pocket",
+      "image": "assets/pocket.webp"
+    },
+    {
+      "name": "B Side",
+      "url": "https://themes.shopify.com/themes/halftone/presets/b-side",
+      "image": "assets/b-side.webp"
+    },
+    {
+      "name": "Gacha",
+      "url": "https://themes.shopify.com/themes/halftone/presets/gacha",
+      "image": "assets/gacha.webp"
+    },
+    {
+      "name": "Zine",
+      "url": "https://themes.shopify.com/themes/halftone/presets/zine",
+      "image": "assets/zine.webp"
+    }
+  ],
+  "App": [
+    {
+      "name": "Kitenzo – Bundle Builder",
+      "url": "https://apps.shopify.com/bundlebuilder",
+      "image": "assets/bundle-builder.webp"
+    }
+  ]
+}
