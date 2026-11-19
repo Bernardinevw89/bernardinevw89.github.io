@@ -81,35 +81,31 @@ if (opening) {
   new ResizeObserver(fitOpening).observe(pageHeader);
 }
 
-const fan = document.querySelector('.fan');
-if (fan) {
-  const cards = [...fan.querySelectorAll('.fan-card')];
-  const tabs = [...fan.querySelectorAll('.fan-tabs button')];
-  const toggle = fan.querySelector('.fan-toggle');
-  let current = location.hash === '#hero-design' ? 1 : 0;
-  let playing = !reduced.matches;
-  let visible = false;
-  let rotation;
-  function updateFan() {
-    clearTimeout(rotation);
-    cards.forEach((card, i) => {
-      card.dataset.depth = (i - current + cards.length) % cards.length;
-      card.setAttribute('aria-hidden', String(i !== current));
-      tabs[i].setAttribute('aria-pressed', String(i === current));
-    });
-    toggle.textContent = playing ? 'Pause' : 'Play';
-    toggle.setAttribute('aria-label', toggle.textContent + ' slideshow');
-    if (playing && visible && !document.hidden) {
-      rotation = setTimeout(() => {
-        current = (current + 1) % cards.length;
-        updateFan();
-      }, 3800);
-    }
+const comparison = document.querySelector('.comparison-hero');
+if (comparison) {
+  const range = comparison.querySelector('input');
+  let animation;
+  function display(value) {
+    range.value = value;
+    comparison.style.setProperty('--split', range.value + '%');
+    range.setAttribute('aria-valuetext', range.value + '% design, ' + (100 - range.value) + '% storefront');
   }
-  tabs.forEach((tab, i) => tab.onclick = () => { current = i; updateFan(); });
-  toggle.onclick = () => { playing = !playing; updateFan(); };
-  reduced.addEventListener('change', () => { playing = !reduced.matches; updateFan(); });
-  document.addEventListener('visibilitychange', updateFan);
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; updateFan(); }).observe(fan);
-  updateFan();
+  const observer = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    observer.disconnect();
+    if (reduced.matches) return;
+    const start = performance.now();
+    function sweep(now) {
+      const t = Math.min(1, (now - start) / 2400);
+      display(Math.round(50 + 35 * Math.sin(t * Math.PI * 2) * Math.sin(t * Math.PI)));
+      if (t < 1) animation = requestAnimationFrame(sweep);
+    }
+    animation = requestAnimationFrame(sweep);
+  }, {threshold:0.5});
+  function stop() { observer.disconnect(); cancelAnimationFrame(animation); }
+  for (const event of ['pointerdown','focus','keydown']) range.addEventListener(event,stop);
+  reduced.addEventListener('change',stop);
+  range.addEventListener('input', () => { stop(); display(range.value); });
+  display(50);
+  observer.observe(comparison);
 }
