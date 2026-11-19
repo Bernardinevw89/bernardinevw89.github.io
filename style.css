@@ -309,29 +309,9 @@ body > header { min-height: 76px; }
 .opening .comparison-hero p{margin:8px 0 0;font-size:.8rem;color:#695c61}
 @media(max-width:720px){.comparison-hero{margin-block:12px;width:min(100%,480px)}.comparison-hero figcaption{flex-wrap:wrap;gap:3px 12px}.comparison-hero figcaption strong{font-size:.88rem}.comparison-hero figcaption span{font-size:.67rem}}
 
-.skills-opening {padding-inline:max(6vw,calc((100vw - 1360px)/2))}
-.skills-opening .opening-copy h1 {margin:18px 0}
-.skills-opening h1 {font-size:clamp(3rem,5.75vw,6.4rem);max-width:12ch}
-.stack,.intro-links,.demo-tabs,.demo-control,.demo-control>div,.demo-actions {display:flex;align-items:center;gap:10px}
-.stack {flex-wrap:wrap;margin:22px 0;padding:0;list-style:none;font:600 .78rem var(--mono);color:#794254}
-.stack li+li:before {content:"·";margin-right:10px}
-.intro-links {gap:22px}.skills-opening .intro-links a {margin:0;font-size:.9rem}
-.demo-workbench {width:100%;min-width:0}
-.demo-tabs {gap:10px;justify-content:space-between;border-bottom:1px solid #d8cbd0}
-.demo-workbench button {cursor:pointer;font:550 .82rem/1.3 system-ui,sans-serif;color:#51444a}
-.demo-tabs button {border:0;border-bottom:2px solid transparent;background:none;padding:10px 2px}
-.demo-tabs button[aria-pressed=true] {color:#873d59;border-color:#9b4d69}
-.demo-surface {display:grid;place-items:center;min-height:315px;padding:22px;background:linear-gradient(125deg,#f2e6e8,#efe8e1);border-radius:9px;margin:15px 0}
-.demo-viewport {width:100%;min-width:0;container-type:inline-size;background:#fcfaf5;box-shadow:0 8px 25px #49313420}
-.demo-feature {display:grid;grid-template-columns:45% 55%;overflow:hidden}
-.demo-photo {min-height:210px;background:#ded3c5 url('assets/sway-campaign-detail.webp') center 40% / cover no-repeat}
-.demo-content {display:grid;align-content:center;gap:12px;padding:16px;min-width:0;overflow:hidden}
-.demo-content small {font-size:.57rem}.demo-content .demo-heading {font:normal clamp(1.55rem,7cqw,2.5rem)/1.02 Georgia,serif;letter-spacing:-.055em;margin:0;overflow-wrap:anywhere}
-.demo-actions {flex-wrap:wrap;gap:5px}.demo-actions span {font:500 .7rem system-ui,sans-serif;white-space:nowrap;padding:6px 8px;border:1px solid #c9bcb9}.demo-actions span:first-child {background:#322d2d;color:white;border-color:#322d2d}
-.compact .demo-viewport {max-width:172px}.compact .demo-feature {grid-template-columns:1fr}.compact .demo-photo {min-height:88px;background-size:cover;background-position:center 32%}.compact .demo-content {padding:12px}.compact .demo-actions {max-width:140px}.regression .demo-actions {flex-wrap:nowrap}
-.demo-control {justify-content:space-between;flex-wrap:wrap}.demo-control[hidden] {display:none}
-.demo-control>span,.demo-control label {font:600 .74rem var(--mono)}.demo-control button,.demo-control input {background:#fffdfb;border:1px solid #cdbdc4;border-radius:4px;padding:7px 10px}
-.demo-control button[aria-pressed=true]{background:#382b31;color:white}.demo-control input {font:inherit;font-size:.86rem;max-width:100%}
-.opening .demo-caption {font-size:.88rem;line-height:1.4;max-width:60ch;margin:10px 0 0;color:#66545b}
-.sway-project {display:grid;grid-template-columns:1fr 1.4fr;gap:6vw;align-items:center;margin:38px 0}.sway-project h3,.archive-title {margin:22px 0 10px}
-@media(max-width:720px){.skills-opening {gap:24px}.skills-opening h1{font-size:clamp(2.8rem,10vw,4.2rem)}.demo-surface{min-height:230px;padding:15px}.demo-content{padding:10px}.demo-photo{min-height:170px}.demo-tabs button{font-size:.73rem}.sway-project {grid-template-columns:1fr;gap:12px}.stack{margin:14px 0}.sway-project .comparison-hero{width:100%}}
+.hero-skills { margin-top: 20px; }
+.opening .hero-skills .core-tools { max-width: none; margin: 0 0 6px; font: 600 .8rem/1.65 var(--mono); color: #794254; }
+.hero-skills summary { width: fit-content; cursor: pointer; font-size: .91rem; text-decoration: underline; text-underline-offset: 4px; }
+.hero-skills dl { margin: 14px 0; padding-left: 16px; border-left: 2px solid #dfc3ce; max-width: 54ch; }
+.hero-skills dt { margin: 12px 0 2px; font-weight: 650; }
+.hero-skills dd { margin: 0; font-size: .93rem; line-height: 1.5; }

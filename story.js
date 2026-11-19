@@ -59,19 +59,17 @@ for (const chapter of chapters) {
     play(chapter);
   };
 }
-if (container) {
-  container.classList.add('enhanced');
-  container.addEventListener('focusin',event => {
-    const chapter = event.target.closest('.chapter');
-    if (chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
-  });
-  addEventListener('scroll',sync,{passive:true});
-  addEventListener('resize',draw);
-  new ResizeObserver(draw).observe(container);
-  document.addEventListener('visibilitychange',() => play(active));
-  reduced.addEventListener('change',() => play(active));
-  draw();
-}
+container.classList.add('enhanced');
+container.addEventListener('focusin',event => {
+  const chapter = event.target.closest('.chapter');
+  if (chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
+});
+addEventListener('scroll',sync,{passive:true});
+addEventListener('resize',draw);
+new ResizeObserver(draw).observe(container);
+document.addEventListener('visibilitychange',() => play(active));
+reduced.addEventListener('change',() => play(active));
+draw();
 
 const pageHeader = document.querySelector('body > header');
 const opening = document.querySelector('.opening');
@@ -110,39 +108,4 @@ if (comparison) {
   range.addEventListener('input', () => { stop(); display(range.value); });
   display(50);
   observer.observe(comparison);
-}
-
-const bench = document.querySelector('.demo-workbench');
-if (bench) {
-  const title = bench.querySelector('#section-title');
-  const heading = bench.querySelector('.demo-heading');
-  const note = bench.querySelector('#demo-note');
-  const fix = bench.querySelector('#fix-wrap');
-  const modeButtons = [...bench.querySelectorAll('[data-mode]')];
-  const widthButtons = [...bench.querySelectorAll('[data-width]')];
-  let mode = 'build';
-  let narrow = false;
-  let repaired = false;
-  function renderDemo() {
-    const qa = mode === 'qa';
-    bench.classList.toggle('compact', narrow || qa);
-    bench.classList.toggle('regression', qa && !repaired);
-    heading.textContent = mode === 'reuse' ? title.value : title.defaultValue;
-    modeButtons.forEach(button => {
-      const selected = button.dataset.mode === mode;
-      button.setAttribute('aria-pressed', String(selected));
-      bench.querySelector('#' + button.dataset.mode + '-controls').hidden = !selected;
-    });
-    widthButtons.forEach(button => button.setAttribute('aria-pressed', String((button.dataset.width === 'narrow') === narrow)));
-    fix.setAttribute('aria-pressed', String(repaired));
-    fix.textContent = repaired ? 'Show original issue' : 'Apply layout fix';
-    if (qa) note.textContent = repaired ? 'The actions wrap onto two lines, so both labels fit.' : 'The size guide is clipped at this width. Apply the fix to check both actions.';
-    if (mode === 'reuse') note.textContent = 'Edit the heading to see one section take different content.';
-    if (mode === 'build') note.textContent = narrow ? 'At a narrow width, the content stacks below the image.' : 'Resize the preview to see the image and text move from two columns to one.';
-  }
-  modeButtons.forEach(button => button.onclick = () => { mode = button.dataset.mode; renderDemo(); });
-  widthButtons.forEach(button => button.onclick = () => { narrow = button.dataset.width === 'narrow'; renderDemo(); });
-  fix.onclick = () => { repaired = !repaired; renderDemo(); };
-  title.oninput = () => { heading.textContent = title.value; };
-  renderDemo();
 }
