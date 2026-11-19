@@ -1,3 +1,4 @@
+const pageHeader = document.querySelector('body > header');
 const chapters = [...document.querySelectorAll('.chapter')];
 const container = document.querySelector('.chapters');
 const path = document.querySelector('.route path');
@@ -35,12 +36,16 @@ function sync() {
     return box.top <= line && box.bottom >= line;
   });
   focusChapter(target);
-  // On mobile, keep the progress marker for every chapter the reader has reached.
-  if (innerWidth <= 720 && !reduced.matches) {
-    const threshold = innerHeight * .72;
-    for (const chapter of chapters) {
-      if (chapter.getBoundingClientRect().top <= threshold) chapter.classList.add('chapter-reached');
-    }
+  // Track only the mobile journey, from its top to the last chapter in view.
+  if (innerWidth <= 720 && pageHeader) {
+    const box = container.getBoundingClientRect();
+    const headerHeight = pageHeader.offsetHeight;
+    const readingSpan = Math.max(1, box.height - (innerHeight - headerHeight));
+    const ratio = Math.min(1, Math.max(0, (headerHeight - box.top) / readingSpan));
+    pageHeader.classList.toggle('journey-progress-visible', box.top <= headerHeight + 1 && box.bottom > headerHeight);
+    pageHeader.style.setProperty('--journey-progress', (ratio * 100).toFixed(2) + '%');
+  } else if (pageHeader) {
+    pageHeader.classList.remove('journey-progress-visible');
   }
 }
 function draw() {
@@ -78,11 +83,11 @@ document.addEventListener('visibilitychange',() => play(active));
 reduced.addEventListener('change',() => play(active));
 draw();
 
-const pageHeader = document.querySelector('body > header');
 const opening = document.querySelector('.opening');
 if (opening) {
   function fitOpening() {
     document.documentElement.style.setProperty('--nav-height', pageHeader.offsetHeight + 'px');
+    sync();
   }
   fitOpening();
   new ResizeObserver(fitOpening).observe(pageHeader);

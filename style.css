@@ -384,19 +384,24 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chaptertext,.chapter .movie{width:100%;max-width:520px;justify-self:center}
 }
 
-/* Mobile chapters carry their own progress cue; the desktop thread is unchanged. */
+/* A lightweight reading rail under the sticky mobile header, not behind content. */
 @media(max-width:720px){
  .chapters>.route{display:none}
- .chaptertext>small{position:relative;display:inline-block}
- .chaptertext>small::after{content:"";position:absolute;inset-inline-start:calc(100% + 10px);inset-block-start:50%;transform:translateY(-50%);width:36px;height:3px;border-radius:999px;background:var(--rose)}
-}
-@media(max-width:720px) and (prefers-reduced-motion:no-preference){
- .chapters.enhanced .chaptertext>small::after{background:linear-gradient(var(--rose),var(--rose)) 0 center/0 100% no-repeat,#baa2aa;transition:background-size .45s ease-out}
- .chapters.enhanced .chapter-reached .chaptertext>small::after{background-size:100% 100%}
+ body>header.journey-progress-visible::after{content:"";position:absolute;inset-inline:0;inset-block-start:100%;height:2px;pointer-events:none;background:linear-gradient(var(--rose),var(--rose)) 0 center/var(--journey-progress,0%) 100% no-repeat,#e5d9dc}
 }
 
 /* Mobile chapters read continuously, independently of which illustration is playing. */
 @media(max-width:720px){
  .chapter{min-height:0;padding-block:clamp(24px,7vw,40px);gap:22px}
  .chapters.enhanced .chapter:not(.current) :is(.chaptertext,.movie){opacity:1;translate:none;transition:none}
+}
+
+/* Typography-led opening: controlled spacing without changing content or type scale. */
+.hero-swap .opening-copy .type-heading{margin:clamp(16px,1.55vw,25px) auto clamp(21px,2.1vw,34px)}
+.hero-swap .opening-copy>p{margin-block:0}
+.hero-swap .opening-copy .opening-link{margin-top:clamp(26px,2.4vw,38px)}
+@media(max-width:720px){
+ .hero-swap .opening-copy .type-heading{margin-block:17px 22px}
+ .hero-swap .opening-copy>p{max-width:37ch}
+ .hero-swap .opening-copy .opening-link{margin-top:25px}
 }
