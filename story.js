@@ -7,7 +7,6 @@ const read = route.querySelector('.route-read');
 const reveal = route.querySelector('clipPath rect');
 let routeStart = 0;
 let routeHeight = 0;
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active;
 function focusChapter(chapter) {
   if (active === chapter) return;
@@ -17,10 +16,8 @@ function focusChapter(chapter) {
 }
 function sync() {
   if (innerWidth > 720) {
-    const travelled = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .56 - routeStart));
+    const travelled = Math.max(0, Math.min(routeHeight, scrollY + innerHeight * .74 - routeStart));
     reveal.setAttribute('height', travelled);
-    const drift = reduced.matches ? '' : String(-travelled * .035);
-    guide.style.strokeDashoffset = read.style.strokeDashoffset = drift;
   }
   const line = innerHeight / 2;
   const target = chapters.find(chapter => {
@@ -63,7 +60,7 @@ function draw() {
     // Cross between notes only in the whitespace, and travel behind each note in one continuous stroke.
     function sweep(x, y, nextX, nextY) {
       const span = Math.max(0, nextY - y);
-      d += ` C ${x} ${y+span*.56} ${nextX} ${nextY-span*.56} ${nextX} ${nextY}`;
+      d += ` C ${x} ${y+span*.70} ${nextX} ${nextY-span*.70} ${nextX} ${nextY}`;
     }
     sweep(firstX, 0, blocks[0].x, Math.max(0, blocks[0].top));
     for (const [i, block] of blocks.entries()) {
@@ -87,7 +84,6 @@ addEventListener('resize',draw);
 const routeLayout = new ResizeObserver(draw);
 routeLayout.observe(container);
 for (const area of document.querySelectorAll('.journeyintro, .chaptertext, .evidence')) routeLayout.observe(area);
-reduced.addEventListener('change', sync);
 draw();
 
 const opening = document.querySelector('.opening');

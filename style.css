@@ -414,12 +414,7 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .evidence h3{font-size:clamp(1.7rem,3.1vw,3.1rem);line-height:1.04;margin:.2em 0 .5em}
 .evidence small{color:#775361}
 .evidence p{font-size:.95rem;line-height:1.52;color:#4f4548}
-.editorial-diagnose{border-inline-start:1px solid #ded4c9;padding-inline-start:clamp(12px,2vw,28px)}
-.editorial-tree,.editorial-workflow{list-style:none;margin:0;padding:0}
-.editorial-tree li{position:relative;padding:12px 0 12px 18px;border-top:1px solid var(--line)}
-.editorial-tree li::before{content:"";position:absolute;inset:20px auto auto 0;width:7px;height:7px;border:1px solid #8a8074;border-radius:50%;background:var(--paper)}
-.editorial-branches{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,24px);margin-top:8px}
-.editorial-branches>div{border-top:1px solid #c9beb2;padding-top:8px}
+.editorial-workflow{list-style:none;margin:0;padding:0}
 .editorial-handoffs{display:grid;grid-template-columns:minmax(6.4rem,.36fr) 1fr;margin:0;line-height:1.48}
 .editorial-handoffs dt,.editorial-handoffs dd{border-top:1px solid var(--line);padding:12px 0;margin:0}
 .editorial-handoffs dt{font-weight:700;padding-right:.75rem}
@@ -429,8 +424,6 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .evidence .flow-feature-image figcaption{padding:6px 0 0;color:#775361;letter-spacing:.03em}
 .editorial-flow h3,.editorial-app h3{margin:.18em 0 .25em}
 .editorial-demo-link{display:inline-block;color:#78364e;margin-top:9px;font-weight:650;text-decoration-thickness:1px}
-.editorial-app{display:grid;grid-template-columns:minmax(90px,.76fr) 1fr;align-items:center;gap:clamp(12px,3vw,32px);border-block:1px solid var(--line);padding-block:14px}
-.editorial-app img{width:100%;height:auto;display:block;border-radius:6px}
 .editorial-workflow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));counter-reset:workflow;gap:12px 18px}
 .editorial-workflow li{counter-increment:workflow;border-top:1px solid #c9beb2;padding-top:8px}
 .editorial-workflow li::before{content:counter(workflow,decimal-leading-zero);color:var(--rose);font:600 .7rem var(--mono);margin-right:7px}
@@ -452,27 +445,22 @@ body:has(.mobile-menu[open]){overflow:hidden}
  .chapters .chaptertext{min-width:0;background:none;box-shadow:none;overflow-wrap:anywhere}
  .chapters .evidence{min-block-size:20rem;display:flex;flex-direction:column;justify-content:center}
 }
-.route .route-guide{stroke:#c99cad}
+.route .route-guide{stroke:#e0cdd4}
 .route .route-read{stroke:#79354e}
 .chapters .evidence{
- --line:#ded4c9;border:1px solid var(--line);border-radius:6px;
- background:#f8f3ed;box-shadow:0 10px 26px #4b2b2110,0 1px 2px #4b2b2109;
+ --line:#d9d7da;border:1px solid var(--line);border-radius:6px;
+ background:#f2f2f3;box-shadow:0 10px 26px #332d3710,0 1px 2px #332d3709;
  padding:clamp(16px,2.25vw,32px);overflow-wrap:anywhere
 }
 .chapters .evidence h3{font-size:clamp(1.52rem,2.25vw,2.35rem);margin:.18em 0 .42em}
 .chapters .evidence p,.editorial-handoffs dd{font-size:.875rem;line-height:1.42}
-.editorial-tree li,.editorial-handoffs dt,.editorial-handoffs dd{padding-block:8px}
-.editorial-tree li::before{top:17px}
-.editorial-branches{gap:12px}
+.editorial-handoffs dt,.editorial-handoffs dd{padding-block:8px}
 .editorial-handoffs{font-size:.875rem}
 .flow-feature-image{margin:0 0 .6rem}
 .flow-feature-image img{height:clamp(96px,12vw,170px);object-fit:cover;object-position:center 23%;border-radius:3px}
-.editorial-app figure{width:min(54%,146px);margin-bottom:.85rem}
 .editorial-workflow{gap:9px 14px}
 @media(max-width:720px){
  .chapters .evidence{min-block-size:0}
- .chapters .editorial-app{display:grid}
- .editorial-app figure{width:100%;margin:0}
 }
 @media(max-width:350px){
  .editorial-handoffs dt{padding-bottom:0}
@@ -482,9 +470,13 @@ body:has(.mobile-menu[open]){overflow:hidden}
 .chapters .evidence>small,.editorial-app small{display:block;margin-bottom:.32rem;color:#79495b}
 .editorial-demo-link{align-self:flex-start;margin-top:12px;text-underline-offset:4px}
 .editorial-demo-link:hover{text-decoration-thickness:2px}
-.editorial-app figure{width:min(62%,174px)}
-.editorial-branches>div{background:#fffaf6;padding:9px 10px 10px}
 .editorial-handoffs dt,.editorial-handoffs dd{padding-block:9px}
 .editorial-workflow li{padding-top:9px}
-@media(max-width:720px){.editorial-app figure{width:100%}}
 @media(max-width:350px){.editorial-handoffs dt{padding-bottom:0}.editorial-handoffs dd{padding-top:4px}}
+
+/* Ambient motion only; both paint layers stay in phase. */
+@media(min-width:721px) and (prefers-reduced-motion:no-preference){
+ .route path{animation:drift-dashes 7s linear infinite}
+ @keyframes drift-dashes{to{stroke-dashoffset:-17px}}
+}
+.editorial-app .flow-feature-image img{object-position:center}
