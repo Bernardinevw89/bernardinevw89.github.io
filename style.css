@@ -278,3 +278,5 @@ body > header { min-height: 76px; }
 .github-capture {container-type:size}
 .github-capture .ticket-hotspot {position:absolute;margin:0;left:38.8%;top:calc(50% - 12.8cqw);width:8.5%;height:2.2cqw}
 .ticket-hotspot[hidden],.capture-target[hidden]{display:none}
+
+.figma-recording {width:100%;height:100%;object-fit:contain;background:#f2f2f2}

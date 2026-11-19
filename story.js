@@ -88,6 +88,7 @@ if (reel) {
   const toggle = reel.querySelector('.reel-toggle');
   const video = reel.querySelector('.sway-video');
   const boardRecording = reel.querySelector('.board-recording');
+  const figmaRecording = reel.querySelector('.figma-recording');
   const boardTarget = reel.querySelector('.capture-target');
   const designLink = reel.querySelector('.ticket-hotspot');
   const ticketTime = 2;
@@ -110,19 +111,20 @@ if (reel) {
     toggle.textContent = label;
     toggle.setAttribute('aria-label', label + ' animation');
     reel.classList.toggle('stopped', !running);
-    const clip = index < 2 ? boardRecording : index === 4 ? video : null;
-    for (const media of [boardRecording,video]) if (media !== clip || !running) media.pause();
+    const clip = [boardRecording, boardRecording, figmaRecording, null, video][index];
+    for (const media of [boardRecording,figmaRecording,video]) if (media !== clip || !running) media.pause();
     if (!running) return;
     if (clip) {
       clip.play().catch(error => {
-        if (error.name !== 'AbortError' && playing && visible && !document.hidden)
-          timeout = setTimeout(() => go(clip === boardRecording ? 2 : 0),4500);
+        if (error.name !== 'AbortError' && frames[Math.max(0,index-1)].contains(clip) && playing && visible && !document.hidden)
+          timeout = setTimeout(() => go(clip === boardRecording ? 2 : clip === figmaRecording ? 3 : 0),4500);
       });
     } else timeout = setTimeout(() => go(index + 1),4500);
   }
   function go(next) {
     setStage(next);
     if (next < 2) boardRecording.currentTime = next === 0 ? 0 : ticketTime;
+    if (next === 2) figmaRecording.currentTime = 0;
     if (next === 4) video.currentTime = 0;
     renderReel();
   }
@@ -130,6 +132,7 @@ if (reel) {
     if (index === 0 && boardRecording.currentTime >= ticketTime) setStage(1);
   });
   boardRecording.addEventListener('ended', () => go(2));
+  figmaRecording.addEventListener('ended', () => go(3));
   video.addEventListener('ended', () => go(0));
   boardTarget.onclick = () => { go(1); designLink.focus({preventScroll:true}); };
   designLink.onclick = event => {
