@@ -195,3 +195,45 @@ body > header { min-height: 76px; }
  @keyframes sprint-pointer{0%{opacity:0;transform:translate(12cqw,9cqw)}25%{opacity:1}75%{transform:none}83%{transform:scale(.8)}95%,100%{transform:none}}
 }
 @media(prefers-reduced-motion:reduce){.scene-target .pointer-tip,.scene-target .click-ring{display:none}}
+
+/* A paper-and-ink workspace against the soft violet opening. */
+.opening {
+  background:
+    radial-gradient(ellipse at 84% 52%, #ded6e9 0, #eeebf280 28%, transparent 55%),
+    radial-gradient(ellipse at 12% 95%, #f1e8dt77, transparent 45%),var(--paper);
+}
+.byline {display:inline-flex;align-items:center;gap:12px;color:#655970}
+.byline::before {content:"";width:28px;height:1px;background:#9785aa}
+.opening-copy h1 em {color:#6c5585}
+.sprint-reel {position:relative;isolation:isolate}
+.sprint-reel::before {content:"";position:absolute;z-index:-1;inset:-3% -2% 12% 4%;transform:rotate(2.4deg);border-radius:17px;background:linear-gradient(135deg,#ece4f2,#e0d6e7);border:1px solid #d4c9dd;box-shadow:0 14px 32px #5b46680d}
+.sprint-reel .reel-window {border-color:#d5ced9;box-shadow:0 30px 60px -30px #49375160,0 5px 16px #57455e15}
+.sprint-reel .chrome {background:linear-gradient(110deg,#fffefa,#f3f0f3);color:#574e5c}
+.sprint {background:linear-gradient(140deg,#faf7f2,#f1edf4);padding:3% 4%}
+.board-heading {display:grid;gap:1px}
+.board-heading small {color:#796d81;font-size:1.8cqw}
+.board-heading strong {font:normal 5.4cqw/.99 Georgia,serif;letter-spacing:-.055em}
+.lanes {height:auto;align-items:start;margin-top:3%;gap:2%}
+.lanes>div {padding:5.5%;background:#ebe4efaa;border:1px solid #e2dbe5}
+.lanes>div:nth-child(2){background:#ece8dfaa;border-color:#e4dfd5}
+.lanes>div:last-child{background:#e3eae2aa;border-color:#d9e2d6}
+.lanes strong {display:flex;align-items:center;gap:.45em;margin-bottom:8%;color:#574b63}
+.lanes strong::before {content:"";width:.52em;height:.52em;border-radius:50%;background:#ad95be}
+.lanes>div:nth-child(2) strong::before {background:#baa374}
+.lanes>div:last-child strong::before {background:#91a68a}
+.issue-card,.side-card {display:block;padding:7%;font:normal 3.05cqw/1.12 Georgia,serif;letter-spacing:-.03em;background:#fffdf9;border:1px solid #dcd5dc;border-radius:5px;box-shadow:0 4px 11px #49395710}
+.issue-card {color:#443348;border-color:#bbaac6}
+.side-card {color:#645e62}
+.side-card small,.issue-card small {display:block;font:500 1.8cqw var(--mono);letter-spacing:0;margin-bottom:4%}
+.sway-cover {display:block;height:7.5cqw;border-radius:2px;background:url('assets/sway-poster.jpg') 20% 31% / 150% auto;margin-bottom:8%}
+.sprint-reel .reel-controls {margin-top:14px;gap:2px}
+.sprint-reel .reel-steps {padding:3px;background:#f8f6f9;border:1px solid #ded8e4;border-radius:24px;box-shadow:0 2px 6px #50405709;gap:0}
+.sprint-reel .reel-steps button[aria-pressed=true] {background:#695579;color:white}
+.sprint-reel .editor {background:radial-gradient(ellipse at top right,#41354b,transparent 70%),#29252e}
+.sprint-reel .editor div:nth-child(2n) code {color:#d5c5a5}
+.sprint-reel .selection,.sprint-reel .wire-sway {box-shadow:0 8px 19px #59466624}
+.wire-sway i,.wire-sway i:nth-child(2){background-image:linear-gradient(#41374428,#41374477),url('assets/sway-poster.jpg');background-size:100% 100%,460% auto;background-position:center,3% 34%}
+.wire-sway i:nth-child(2){background-position:center,50% 34%}
+.wire-sway i:nth-child(3){background-position:center,97% 34%}
+@media(max-width:720px){.sprint-reel::before{inset:-1% 0 15% 4%;transform:rotate(1.7deg)}.sprint-reel .reel-controls button{padding-inline:6px}}
+@media(max-width:720px) and (max-height:650px){.sprint-reel .reel-controls button{padding-inline:3px}}
