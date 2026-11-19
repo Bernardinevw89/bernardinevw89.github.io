@@ -1,45 +1,74 @@
-const timeline = document.querySelector('.timeline');
-const art = document.querySelector('.art');
-const milestones = [...document.querySelectorAll('.milestone')];
+const chapters = [...document.querySelectorAll('.chapter')];
+const container = document.querySelector('.chapters');
+const path = document.querySelector('.route path');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-function updateMotion() {
-  if (art) {
-    const offset = reduced.matches ? 0 : Math.min(1, scrollY / innerHeight);
-    art.style.setProperty('--motion', offset);
-  }
-  if (timeline) {
-    const bounds = timeline.getBoundingClientRect();
-    const readingLine = innerHeight * 0.62;
-    const progress = Math.max(0, Math.min(1, (readingLine - bounds.top) / bounds.height));
-    timeline.style.setProperty('--progress', reduced.matches ? '100%' : progress * 100 + '%');
-    for (const milestone of milestones) {
-      const box = milestone.getBoundingClientRect();
-      milestone.classList.toggle('passed', box.top + box.height / 2 <= readingLine);
-    }
-  }
+let active;
+let timer;
+function show(chapter, step) {
+  chapter.dataset.step = step;
+  chapter.querySelectorAll('.shot').forEach((shot,i) => { shot.hidden = i !== step; });
+  chapter.querySelectorAll('.stages i').forEach((dot,i) => dot.classList.toggle('done',i <= step));
+  chapter.querySelector('.play').textContent = step === 2 ? 'Replay scene' : 'Next step';
 }
-let queued = false;
-function scheduleMotion() {
-  if (queued) return;
-  queued = true;
-  requestAnimationFrame(() => { updateMotion(); queued = false; });
+function play(chapter) {
+  clearInterval(timer);
+  if (!chapter || reduced.matches || document.hidden) return;
+  timer = setInterval(() => {
+    const step = Number(chapter.dataset.step);
+    if (step < 2) show(chapter, step + 1);
+    if (step >= 1) clearInterval(timer);
+  }, 2700);
 }
-addEventListener('scroll', scheduleMotion, {passive:true});
-addEventListener('resize', scheduleMotion);
-reduced.addEventListener('change', scheduleMotion);
-updateMotion();
-if ('IntersectionObserver' in window) {
-  document.documentElement.classList.add('js');
-  const observer = new IntersectionObserver(entries => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        entry.target.classList.remove('pending');
-        observer.unobserve(entry.target);
-      }
-    }
-  }, {threshold:0.1});
-  for (const element of document.querySelectorAll('.cards article, .milestone, .more h2')) {
-    element.classList.add('reveal','pending');
-    observer.observe(element);
+function focusChapter(chapter) {
+  if (active === chapter) return;
+  active?.classList.remove('current');
+  active = chapter;
+  if (active) {
+    active.classList.add('current');
+    show(active,0);
   }
+  play(active);
 }
+function sync() {
+  if (!reduced.matches) path.style.strokeDashoffset = String(-scrollY * 0.1);
+  const line = innerHeight / 2;
+  const target = chapters.find(chapter => {
+    const box = chapter.getBoundingClientRect();
+    return box.top <= line && box.bottom >= line;
+  });
+  focusChapter(target);
+}
+function draw() {
+  const w = container.clientWidth;
+  const mobile = innerWidth <= 720;
+  let d = 'M ' + w * (mobile ? .05 : .5) + ' 0';
+  for (const [i,chapter] of chapters.entries()) {
+    const y = chapter.offsetTop;
+    const h = chapter.offsetHeight;
+    const x = w * (mobile ? .055 : .5);
+    const bend = w * (mobile ? .04 : .29) * (i % 2 ? -1 : 1);
+    d += ' C '+(x+bend)+' '+(y+h*.32)+' '+(x-bend)+' '+(y+h*.7)+' '+x+' '+(y+h);
+  }
+  path.setAttribute('d',d);
+  sync();
+}
+for (const chapter of chapters) {
+  show(chapter,0);
+  chapter.querySelector('.play').onclick = () => {
+    clearInterval(timer);
+    const next = (Number(chapter.dataset.step)+1)%3;
+    show(chapter,next);
+    if (next === 0) play(chapter);
+  };
+}
+container.classList.add('enhanced');
+container.addEventListener('focusin',event => {
+  const chapter = event.target.closest('.chapter');
+  if (chapter && active !== chapter) chapter.scrollIntoView({block:'center',behavior:'instant'});
+});
+addEventListener('scroll',sync,{passive:true});
+addEventListener('resize',draw);
+new ResizeObserver(draw).observe(container);
+document.addEventListener('visibilitychange',() => play(active));
+reduced.addEventListener('change',() => play(active));
+draw();
