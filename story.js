@@ -171,20 +171,22 @@ if (comparison) {
 }
 
 // Animate only the visual copy. The full accessible heading is static.
-(() => {
-  const output = document.querySelector('[data-type-output]');
-  if (!output || !window.matchMedia) return;
+document.querySelectorAll('[data-type-output]').forEach(output => {
+  if (!window.matchMedia) return;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const phrases = ['Shopify themes', 'Shopify apps', 'web interfaces'];
+  const phrases = [...output.parentElement.querySelectorAll('.type-measure')].map(phrase => phrase.textContent);
+  const heading = output.closest('h1, h2');
+  const trackVisibility = output.hasAttribute('data-type-on-visible') && 'IntersectionObserver' in window;
+  let visible = !trackVisibility;
   let index = 0, count = phrases[0].length, deleting = true, timer;
 
   function schedule(delay) {
     window.clearTimeout(timer);
-    if (!motion.matches && !document.hidden) timer = window.setTimeout(tick, delay);
+    if (visible && !motion.matches && !document.hidden) timer = window.setTimeout(tick, delay);
   }
 
   function tick() {
-    if (motion.matches || document.hidden) return;
+    if (!visible || motion.matches || document.hidden) return;
     count += deleting ? -1 : 1;
     output.textContent = phrases[index].slice(0, count);
     if (deleting && count === 0) {
@@ -199,6 +201,13 @@ if (comparison) {
     }
   }
 
+  if (trackVisibility) {
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      schedule(visible ? 1100 : 0);
+    });
+    observer.observe(heading);
+  }
   document.addEventListener('visibilitychange', () => schedule(450));
   if (motion.addEventListener) motion.addEventListener('change', () => {
     if (motion.matches) {
@@ -210,7 +219,7 @@ if (comparison) {
     schedule(1800);
   });
   schedule(1800);
-})();
+});
 
 // Native dialog provides a modal focus trap and makes the rest of the page inert.
 (() => {
